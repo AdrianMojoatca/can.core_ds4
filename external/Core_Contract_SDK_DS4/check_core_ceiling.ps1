@@ -1,7 +1,7 @@
 # Verifica soft-ceiling-ul CORE dupa build.
 # Uz:  .\check_core_ceiling.ps1 [cale_catre_map]
-param([string]$Map = "D:\ADI\DS4\Based_on_latest_core\FW_CORE_SPLIT\core_ds4\build\core_ds4_build\core_ds4_release.map")
-$soft = 0x26E00; $hard = 0x27E00
+param([string]$Map = "D:\ADI\DB3\Based_on_latest_core\DS4_CORE_SPLIT\core_ds4\build\ds4_build\main_ngmm_release.map")
+$soft = 0x36000; $hard = 0x37000
 if(-not (Test-Path $Map)){ Write-Host "Map negasit: $Map" -ForegroundColor Red; exit 2 }
 $txt = Get-Content $Map -Raw
 $m = [regex]::Match($txt, 'Load Region LR_IROM_APP1 \(Base: (0x[0-9A-Fa-f]+), Size: (0x[0-9A-Fa-f]+)')

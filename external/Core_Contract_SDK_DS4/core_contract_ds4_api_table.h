@@ -225,8 +225,8 @@ typedef struct
     void* reserved_slots[CORE_DS4_API_TABLE_RESERVED_SLOTS];
 } core_ds4_api_table_t;
 
-/* Ceiling guard: the table (published at 0x27040) must not reach the FW image
-   base (0x28000). Fails to compile if the table grows past the 0xFC0 (4032 B)
+/* Ceiling guard: the table (published at 0x37040) must not reach the FW image
+   base (0x38000). Fails to compile if the table grows past the 0xFC0 (4032 B)
    window. DS4 is greenfield: reserved_slots=16 and the surface still evolves, so
    there is NO frozen-size pin yet (added at DS6 freeze). */
 typedef char core_ds4_api_table_fits_assert[

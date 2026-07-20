@@ -14,9 +14,14 @@ LR_ABOUT                  0x00008000        0x100
 
 ;----------------------------------------------------------------------------;
 
-LR_IROM_APP1 0x00008100 (0x40000 - 0x8100 - 0x100)   
-{    ; load region size_region  
-  ER_IROM_APP1 0x8100   (0x40000 - 0x8100 - 0x100)                      
+; DS4 split policy: the CORE code region is HARD-CAPPED at the ABI info addr 0x37000
+; (size 0x2EF00 = 0x37000 - 0x8100). CORE code must fit below the shared ABI info /
+; API table (0x37000 / 0x37040); the FW image lives at 0x38000..0x3FEFF. Growing CORE
+; past 0x37000 is a LINK error (region overflow) -- never a silent overlap with the
+; table or FW. Keep in sync with core_contract_ds4_image_layout.h.
+LR_IROM_APP1 0x00008100 0x0002EF00
+{    ; load region size_region
+  ER_IROM_APP1 0x8100   0x0002EF00
     {
       crt0.o (APP_VECTOR, +First) 
       *.o (+RO) 
