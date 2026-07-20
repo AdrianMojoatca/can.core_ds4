@@ -1,1 +1,0 @@
-lib.prog_hy_canada is created to manage the functional differences between DBALL RSR and Hy Canada OEM RSR
