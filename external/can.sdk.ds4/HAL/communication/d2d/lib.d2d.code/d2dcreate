@@ -1,0 +1,13 @@
+#! /bin/bash
+
+declare p=`echo $0 | sed -e "s/d2dcreate//"`
+
+rm -f $p/stripped/d2d_code*
+rm -f $p/full/d2d_code*
+
+perl $p/d2d_gen.pl $p/d2d_code.gen stripped c
+perl $p/d2d_gen.pl $p/d2d_code.gen stripped asm
+perl $p/d2d_gen.pl $p/d2d_code.gen full c
+perl $p/d2d_gen.pl $p/d2d_code.gen full asm
+
+echo "!! Creation Done !!"

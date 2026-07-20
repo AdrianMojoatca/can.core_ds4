@@ -1,0 +1,78 @@
+FRDs porting - WIKI
+
+#FRD16
+1. TAKEOVER (DB3) - EUROPE
+- in tsk_rs_init.c - se comenteaza "tsk_rs_takeover_cfg = TSK_RS_TAKEOVER_AFTERMARKET | TSK_RS_TAKEOVER_OEM ;" - practic suprascrie config-urile in db3 si nu vrem asta
+- se foloseste config_prog.h pentru configurare (doar pt. DB3)
+- pentru teste se sterge entry-ul FEAT_FW_16EU si se ruleaza apoi fw-ul; astfel la rulare se vor lua in considerare noile feat de catre fw
+- ex de FEAT_FW_FRD16EU: 09 03 01 16 03 01; ultimul byte (aici 0x01) este valoarea takeover-ului din fw
+- pentru actualizarea feat de takeover (si alte feat dealtfel) se foloseste fw_options_set DIN (si doar DIN) DB3
+
+2. TAKEOVER (DS4) - EUROPE
+- feat sunt in config_ngmm_features.h, iar takeover este in byte-ul no. 31 (si nu in config_prog.h)
+- pentru teste se sterge "FEAT_DEI" si se ruleaza apoi fw-ul pentru incarca setarile din codul sursa
+- optiunile din Takeover (DS4 si DB3) trebuie cumva facute sa treaca prin acelasi loc (TBD)
+
+3. GETTER/SETTER - comune
+- tot ce tine de getters/setters - trebuie initializat ca sursa (AUTO, W2W sau DATA) inainte de utilizarea propriuzisa (ex. in sense_init()) 
+- aici includem si speed, si rpm, nu doar convenience
+
+4. TAKEOVER (DB3) - EUROPE
+- pentru doar 2 feature (asa cum intentionam sa fie) se foloseste codul de mai jos in config_prog.h:
+	// <e0> Takeover
+	//    <o1> Option
+	//         <1=> Disable with Door Open
+	//         <4=> *Enable
+	// <q2> Option1 enable
+	// <q3> Option2 enable
+	// <q4> Option3 enable
+	// <q5> Option4 enable
+	// <q6> Option5 enable
+
+5. HAZARD - pentru test pe bench se foloseste hazard_tsk.c cu mesajele 0x7FF
+
+6. in tsk_rs_init.c, in functia tsk_rs_init() se decomenteaza "tsk_rs_takeover_cfg     = TSK_RS_TAKEOVER_AFTERMARKET | TSK_RS_TAKEOVER_OEM ;" - practic aici se inhiba orice configurare din config_prog.h pt. takeover
+
+7. pentru speed protection se foloseste lib-ul FRD15EU\code\falcon\core\core\lib.flc.tsk.rs\tsk_rs_cmd_init.c pentru model:
+	- in tsk_rs_cmd_init.c (handl-erele se vor folosi in task_rs_cmd.c)
+		- {INPUT_SPEED_SET        , (Exec_Func)tsk_rs_cmd_speed_set},  // ADI M
+		- {INPUT_SPEED_CLR        , (Exec_Func)tsk_rs_cmd_speed_clr}  // ADI M
+	- in in task_rs_cmd.c:
+		- void tsk_rs_cmd_speed_set ( void ) cu corpul functiei din frd15EU
+		- void tsk_rs_cmd_speed_clr ( void ) cu corpul functiei din frd15EU
+	- in func_rs_pts_callback.c:
+		- se apeleaza  macro-urile din config_gpio.h pentru pts
+		- aceasta functie ramane la indemana programatorului sau trebuie facuta in asa fel incat sa fie configurabila prin core?
+
+#FRD25#
+8. in frd_func_wakeup() se pune exact codul din FRD16EU pt toate fw-ele, pentru a evita resetul
+
+9. func_rs_pts_callback.c trebuie adaugat in "\code\falcon\core\core\lib.flc.tsk.rs "
+
+10. tsk_rs_init() din tsk_rs_init.c trebuie facut ca in frd15eu - se introduce callback-ul pt. pts (speed protection)
+
+11. in tsk_rs. se pune prototipul void tsk_rs_init      ( Tsk_Rs_Pts func ); // ADI M (in loc de cel vechi cu void ca parametru
+
+12. ATENTIE: unul dintre core-uri bus_status_notify_input_keyless_trunk() din "code\common\core_release\lib.bus.status\bus_status_notify_input_keyless_trunk.c" face d2d_tx(SET_KEYLESS_DISARM); n-ar trebui face keyles disarm daca e doar trunk release
+
+13. getters si setters pt. rs TREBUIE sa fie pusi manual in func_rs deocamdata. Anumite versiuni de core nu le propaga corect (de vazut cu copilot)
+
+14. in frd_sense_speed.c folosim un flag global, pe care-l vom testa in func_rs.c la ign_off 
+
+15. pt. speed protection se foloseste EXACT logica din frd25eu - cu frd_sense_speed() si cu sense_init() - un timer care se activeaza dupa ce apare speed in conditiile [ (get_rs_gwr() && get_rs_ign() && (get_rpm()>200) ) ]
+
+#REN09#
+16. in dei_out_init.c se insereaza comenzile pe care le definim in config_ngmm_feature.h
+
+#FRD37EU 
+	Modificari Handbrake in core:
+17. debouce-ul pt. handbrake este doar in "sense_rs_can.h"; nu se mai defineste alt debounce in alta parte
+18. pt. activarea out-ului pt. handbrake vom folosi doar fisierul "...\external\can.sdk.db3\APP\features\falcon\core\lib.flc.sense_rs_can\sense_rs_can_handbrake.c"; vezi exceptia un punct mai jos
+19. in sense_handbrake.c out-ul se activeaza doar pt. cazul in care nu avem ignition pe masina
+20. in sense_notify_hbrake.c (pt. DB3 deocamdata) se comenteaza out-ul de HANDBRAKE (se numeste HANDBRAKE_OUT - si-l vom folosi in "contractul" cu care generam aceleasi IO pt. toate fw's
+21. aceste modificari se fac in core, astfel incat:
+	- avem un singur debounce pt. Handbrake la toate fw's
+	- activarea de HB pe W2W sa fie sincrona cu activarea de HB pe D2D 
+	Modificari TrunkRlease in core:
+22. in "core_release\lib.bus.status\bus_status_notify_input_keyless_trunk.c" pur si simplu se comenteaza linia "d2d_tx(SET_KEYLESS_DISARM);"
+23. nu se stie deocamdata de ce safec disrm odata cu trunk_release

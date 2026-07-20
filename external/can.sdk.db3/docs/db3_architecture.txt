@@ -1,0 +1,1043 @@
+================================================================================
+  AS-IS ARCHITECTURE DOCUMENTATION - FRD15EU_DB3 PROJECT
+================================================================================
+
+Date: March 25, 2026
+Project: FRD15EU DB3 Embedded Firmware (DBALL3)
+Build System: CMake (migrated from Keil uVision 4)
+MCU Target: NXP LPC1766 (ARM Cortex-M3)
+SDK Location: .cmake_migration/code/src/SDK/
+
+This document describes the ACTUAL layered architecture of the migrated DB3
+project as it exists in `.cmake_migration/code/src/SDK/`.
+
+This architecture follows a three-layer OSI-like structure with clear separation
+of concerns, adapted for DB3-specific features (DBALL3 remote start, D2DI
+protocol, W2W functionality).
+
+================================================================================
+ARCHITECTURAL OVERVIEW
+================================================================================
+
+The codebase follows a three-layer architecture with clear separation of concerns:
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  APP (Application Layer)                                                 │
+│  High-level application logic, features, services, and vehicle control  │
+│  ~34 libraries                                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↕
+┌─────────────────────────────────────────────────────────────────────────┐
+│  HAL (Hardware Abstraction Layer)                                       │
+│  Hardware abstraction, communication protocols, OS services             │
+│  ~15 libraries                                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↕
+┌─────────────────────────────────────────────────────────────────────────┐
+│  BSP (Board Support Package)                                            │
+│  Low-level hardware drivers, peripherals, MCU-specific code             │
+│  ~26 libraries                                                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+ADDITIONAL LAYERS:
+- **ENTRY**: Application entry points (2 libraries: main functions, task init)
+- **INC**: Configuration headers and build-time configuration files
+- **UNUSED**: Archived mirror of all active layers (historical preservation)
+
+
+================================================================================
+DIRECTORY STRUCTURE (AS-IS)
+================================================================================
+
+.cmake_migration/code/src/SDK/
+├── APP/                          # Application Layer (~34 libraries)
+│   ├── features/                 # Product features
+│   │   ├── dball3/               # DBALL3-specific features (6 libraries)
+│   │   │   ├── lib.about/
+│   │   │   ├── lib.display/
+│   │   │   ├── lib.rsr/
+│   │   │   ├── lib.rsr_feature/
+│   │   │   ├── lib.rxt/
+│   │   │   └── lib.w2w/
+│   │   └── falcon/               # Falcon telematics features
+│   │       ├── core/             # Minimal falcon implementation
+│   │       ├── core_framework.h
+│   │       └── falcon.c
+│   │
+│   ├── framework/                # System framework (2 libraries)
+│   │   ├── lib.core/
+│   │   └── lib.status_system/
+│   │
+│   ├── services/                 # Core services (11 libraries)
+│   │   ├── control/              # Command and control services
+│   │   │   ├── lib.cmd/
+│   │   │   ├── lib.ctl.dl/
+│   │   │   └── lib.pts_ctl/
+│   │   ├── events/               # Event management
+│   │   │   └── lib.sense.notify/
+│   │   ├── outputs/              # Output control services
+│   │   │   ├── lib.led/
+│   │   │   ├── lib.out/
+│   │   │   ├── lib.out_fifo/
+│   │   │   └── lib.out_q/
+│   │   ├── queues/               # Queue management
+│   │   │   ├── lib.exec/
+│   │   │   ├── lib.fifo/
+│   │   │   ├── lib.q/
+│   │   │   └── lib.reg.q/
+│   │   ├── sensors/              # Sensor interfaces
+│   │   │   └── lib.tach/
+│   │   ├── status/               # Status monitoring
+│   │   │   ├── lib.bus.status/
+│   │   │   ├── lib.status/
+│   │   │   └── lib.status.req/
+│   │   ├── timing/               # Timing services
+│   │   │   ├── lib.timeout/
+│   │   │   └── lib.timeout.f/
+│   │   └── trace/                # Debug and tracing
+│   │       ├── lib.dbg/
+│   │       └── lib.trace/
+│   │
+│   ├── utilities/                # Utility libraries (4 libraries)
+│   │   ├── lib.bitfield/
+│   │   ├── lib.crc/
+│   │   ├── lib.eips/
+│   │   └── lib.reg/
+│   │
+│   └── vehicle/                  # Vehicle-specific logic (8 libraries)
+│       ├── diagnostics/
+│       │   ├── com.ext.lib.obd_can/
+│       │   └── lib.vin/
+│       ├── programming/
+│       │   ├── lib.prog/
+│       │   └── lib.prog_1700/
+│       └── security/
+│           ├── com.lib.dst/
+│           ├── com.lib.dstcrypt/
+│           ├── com.lib.dst_bus/
+│           └── com.lib.key/
+│
+├── BSP/                          # Board Support Package (~26 libraries)
+│   ├── bootloader/               # Bootloader (1 library)
+│   │   └── lib.app.scatter.1766/
+│   │
+│   ├── mcu/                      # MCU-specific implementations (10 libraries)
+│   │   ├── device/               # Generic device abstraction (3 libraries)
+│   │   │   ├── lib.device/
+│   │   │   ├── lib.hw_ver_code/
+│   │   │   └── lib.system.type/
+│   │   └── lpc1700/              # LPC1700-specific (7 libraries)
+│   │       ├── lib.device.lpc1700/
+│   │       ├── lib.gpio_1700/
+│   │       ├── lib.nvfs_1700/
+│   │       ├── lib.os_1700/
+│   │       ├── lib.os_1700.machine/
+│   │       ├── lib.sys_1700/
+│   │       └── lib.wake_1700/
+│   │
+│   └── peripherals/              # Peripheral drivers (15 libraries)
+│       ├── analog/               # ADC/DAC drivers (3 libraries)
+│       │   ├── lib.dac/
+│       │   ├── lib.hw.adc/
+│       │   └── lib.hw.dac/
+│       ├── can/                  # CAN controller (2 libraries)
+│       │   ├── com.ext.lib.can/
+│       │   └── com.ext.lib.can.lut.sw/
+│       ├── gpio/                 # GPIO drivers (2 libraries)
+│       │   ├── lib.gpio_pl/
+│       │   └── lib.gpio_wake/
+│       ├── interrupts/           # Interrupt handling (4 libraries)
+│       │   ├── lib.fiq/
+│       │   ├── lib.irq.usr_1700/
+│       │   ├── lib.isr_1700/
+│       │   └── lib.vic/
+│       ├── serial/               # Serial communication (3 libraries)
+│       │   ├── com.ext.hobp_bus/
+│       │   ├── lib.sio/
+│       │   └── lib.sio_uart/
+│       ├── storage/              # (empty - reserved)
+│       ├── timers/               # Timer peripherals (1 library)
+│       │   └── lib.tmr/
+│       └── watchdog/             # Watchdog timer (1 library)
+│           └── lib.wdog/
+│
+├── ENTRY/                        # Entry Points (2 libraries)
+│   ├── lib.main_1700/            # Main application entry (LPC1700)
+│   │   ├── crt0.s                # C Runtime startup (assembly)
+│   │   └── main.c
+│   └── lib.task_main/            # DBALL3 task initialization
+│       └── task_main.c
+│
+├── HAL/                          # Hardware Abstraction Layer (~15 libraries)
+│   ├── communication/            # Communication protocols (8 libraries)
+│   │   ├── can/                  # CAN vehicle protocol (2 libraries)
+│   │   │   ├── com.ext.lib.can.v/
+│   │   │   └── com.ext.lib.can.v.usr/
+│   │   ├── d2d/                  # Device-to-Device (2 libraries)
+│   │   │   ├── lib.d2d/
+│   │   │   └── lib.d2d.code/
+│   │   ├── d2di/                 # D2DI over UART (2 libraries)
+│   │   │   ├── lib.d2di/
+│   │   │   └── lib.d2di_uart/
+│   │   ├── hobp/                 # Honda immobilizer (1 library)
+│   │   │   └── com.ext.hobp_type6/
+│   │   └── rf/                   # RF communication (4 libraries)
+│   │       ├── lib.rf/
+│   │       ├── lib.rftd/
+│   │       ├── lib.rftd2/
+│   │       └── lib.rf_loop/
+│   │
+│   ├── io/                       # I/O abstraction (3 libraries)
+│   │   ├── lib.idb/
+│   │   ├── lib.ied/
+│   │   └── lib.led_usr/
+│   │
+│   ├── os/                       # OS services (1 library)
+│   │   └── scheduler/
+│   │
+│   ├── power/                    # Power management (1 library)
+│   │   └── wake/
+│   │
+│   ├── security/                 # Security services (1 library)
+│   │   └── lib.secure.lock/
+│   │
+│   └── storage/                  # Storage abstraction (1 library)
+│       └── nvfs/
+│
+├── INC/                          # Headers & Configuration
+│   ├── common/                   # Common headers
+│   │   └── core_release/
+│   ├── dball/                    # DBALL3 configurations
+│   │   ├── core/
+│   │   ├── inc.config.d2d/
+│   │   └── inc.config.fw/
+│   └── falcon/                   # Falcon configurations
+│       └── core/
+│
+└── UNUSED/                       # Archived Code (inactive mirror)
+    ├── APP/                      # Archived APP layer
+    ├── BSP/                      # Archived BSP layer
+    ├── ENTRY/                    # Archived ENTRY layer
+    ├── HAL/                      # Archived HAL layer
+    └── INC/                      # Archived INC layer
+
+
+================================================================================
+LAYER DEPENDENCY RELATIONSHIPS
+================================================================================
+
+The architecture enforces clear dependency rules:
+
+    APP Layer
+      │
+      ├─ Depends on: HAL, BSP (through HAL)
+      └─ Never depends on: ENTRY, INC (includes headers only)
+      
+    HAL Layer
+      │
+      ├─ Depends on: BSP
+      └─ Never depends on: APP, ENTRY
+      
+    BSP Layer
+      │
+      ├─ Depends on: (nothing - lowest layer)
+      └─ Never depends on: HAL, APP, ENTRY
+      
+    ENTRY Layer
+      │
+      ├─ Depends on: APP, HAL, BSP (orchestrates everything)
+      └─ Never provides: reusable APIs (only entry points)
+      
+    INC Layer
+      │
+      ├─ Provides: Configuration headers (compile-time constants)
+      ├─ Included by: All layers
+      └─ Never contains: Executable code
+
+
+================================================================================
+DETAILED LIBRARY INVENTORY
+================================================================================
+
+
+################################################################################
+###  APP LAYER - APPLICATION LOGIC (~34 LIBRARIES)
+################################################################################
+
+
+--------------------------------------------------------------------------------
+APP/features/ - PRODUCT FEATURES
+--------------------------------------------------------------------------------
+
+┌─ APP/features/dball3/ ─────────────────────────────────────────────────────┐
+│  DBALL3-specific product features (remote start, wire-to-wire, display)   │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.about            - Product information and version management         │
+│  lib.display          - Display management (LED patterns)                  │
+│  lib.rsr              - Remote Start System (state machine, core logic)    │
+│  lib.rsr_feature      - Remote Start Feature Management                    │
+│  lib.rxt              - Remote Start Extension/Timer                       │
+│  lib.w2w              - Wire-to-Wire Integration (module cascading)        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/features/falcon/ ─────────────────────────────────────────────────────┐
+│  Falcon-specific features (telematics/tracking)                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│  core/                - Minimal falcon core implementation                 │
+│  core_framework.h     - Falcon framework header                            │
+│  falcon.c             - Falcon main implementation                         │
+│                                                                             │
+│  NOTE: Falcon is minimally implemented in this project. Full falcon         │
+│  feature set (CAN periodic, hazard control, OBD-CAN integration, etc.)     │
+│  is not present in the current migration.                                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+APP/framework/ - SYSTEM FRAMEWORK
+--------------------------------------------------------------------------------
+
+┌─ APP/framework/ ───────────────────────────────────────────────────────────┐
+│  Core system framework and status management                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.core                 - Core system initialization                     │
+│  lib.status_system        - System-level status management                 │
+│    (multi-file: status_system.c, status_system_get.c,                     │
+│     status_system_set.c, status_system_init.c, status_system_vars.c)      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+APP/services/ - CORE SERVICES
+--------------------------------------------------------------------------------
+
+┌─ APP/services/control/ ────────────────────────────────────────────────────┐
+│  Control and command processing services                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.cmd                  - Command interpreter/dispatcher                 │
+│  lib.ctl.dl               - Datalink control                               │
+│  lib.pts_ctl              - PTS (Pass-Thru) control                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/events/ ─────────────────────────────────────────────────────┐
+│  Event management and notification services                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.sense.notify         - Sensor notification bridge                     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/outputs/ ────────────────────────────────────────────────────┐
+│  Output control services                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.led                  - LED control                                    │
+│  lib.out                  - Generic output control                         │
+│  lib.out_fifo             - Output FIFO queue                              │
+│  lib.out_q                - Output queue management                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/queues/ ─────────────────────────────────────────────────────┐
+│  Queue and execution services                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.exec                 - Execution queue                                │
+│  lib.fifo                 - FIFO queue implementation                      │
+│  lib.q                    - Generic queue                                  │
+│  lib.reg.q                - Registry queue                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/sensors/ ────────────────────────────────────────────────────┐
+│  Sensor reading and processing services                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.tach                 - Hardware tachometer interface (DBALL3-specific)│
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/status/ ─────────────────────────────────────────────────────┐
+│  Status monitoring and reporting services                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.bus.status           - Bus status monitoring                          │
+│  lib.status               - System status management                       │
+│  lib.status.req           - Status request/response handling               │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/timing/ ─────────────────────────────────────────────────────┐
+│  Timing and timeout services                                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.timeout              - Timeout management                             │
+│  lib.timeout.f            - Fast timeout management                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/trace/ ──────────────────────────────────────────────────────┐
+│  Debug and trace services                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.dbg                  - Debug output                                   │
+│  lib.trace                - Trace logging system                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+APP/utilities/ - UTILITY LIBRARIES
+--------------------------------------------------------------------------------
+
+┌─ APP/utilities/ ───────────────────────────────────────────────────────────┐
+│  General-purpose utility libraries                                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.bitfield             - Bitfield manipulation utilities                │
+│  lib.crc                  - CRC calculation (CRC16, CRC32)                 │
+│  lib.eips                 - EIPS (Enhanced Idle Prevention System)         │
+│  lib.reg                  - Registry/function registration                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+APP/vehicle/ - VEHICLE-SPECIFIC LOGIC
+--------------------------------------------------------------------------------
+
+┌─ APP/vehicle/diagnostics/ ─────────────────────────────────────────────────┐
+│  Vehicle diagnostics and identification                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.lib.obd_can      - OBD-II CAN diagnostics                         │
+│  lib.vin                  - VIN reading and parsing                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/vehicle/programming/ ─────────────────────────────────────────────────┐
+│  Device programming and configuration                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.prog                 - Programming mode and menu                      │
+│  lib.prog_1700            - LPC1700 programming interface                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/vehicle/security/ ────────────────────────────────────────────────────┐
+│  Vehicle security and immobilizer integration                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.lib.dst              - DST (Digital Secure Transceiver)               │
+│  com.lib.dstcrypt         - DST encryption/decryption                      │
+│  com.lib.dst_bus          - DST bus communication                          │
+│  com.lib.key              - Key management                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  BSP LAYER - BOARD SUPPORT PACKAGE (~26 LIBRARIES)
+################################################################################
+
+
+--------------------------------------------------------------------------------
+BSP/bootloader/ - BOOTLOADER AND MEMORY LAYOUT
+--------------------------------------------------------------------------------
+
+┌─ BSP/bootloader/ ──────────────────────────────────────────────────────────┐
+│  Bootloader and memory scatter/linker configuration                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.app.scatter.1766     - LPC1766 memory scatter/linker configuration    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+BSP/mcu/ - MCU-SPECIFIC IMPLEMENTATIONS
+--------------------------------------------------------------------------------
+
+┌─ BSP/mcu/device/ ──────────────────────────────────────────────────────────┐
+│  Device identification and hardware version detection                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.device               - Generic device interface                       │
+│  lib.hw_ver_code          - Hardware version code reader                   │
+│  lib.system.type          - System type identification                     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/mcu/lpc1700/ ─────────────────────────────────────────────────────────┐
+│  NXP LPC1700-specific implementations                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.device.lpc1700       - LPC1700 device driver                          │
+│  lib.gpio_1700            - GPIO driver for LPC1700 (DBALL3-specific)      │
+│  lib.nvfs_1700            - NVFS implementation for LPC1700                │
+│  lib.os_1700              - OS implementation for LPC1700                  │
+│  lib.os_1700.machine      - OS machine-specific code (LPC1700)             │
+│  lib.sys_1700             - System functions for LPC1700                   │
+│  lib.wake_1700            - Wake/low-power mode for LPC1700                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+BSP/peripherals/ - PERIPHERAL DRIVERS
+--------------------------------------------------------------------------------
+
+┌─ BSP/peripherals/analog/ ──────────────────────────────────────────────────┐
+│  Analog peripherals (ADC, DAC)                                             │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.dac                  - DAC driver                                     │
+│  lib.hw.adc               - Hardware ADC driver (DBALL3-specific)          │
+│  lib.hw.dac               - Hardware DAC driver (DBALL3-specific)          │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/can/ ─────────────────────────────────────────────────────┐
+│  CAN bus controller driver                                                 │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.lib.can          - Low-level CAN driver (vendor library)          │
+│  com.ext.lib.can.lut.sw   - CAN lookup table (software implementation)     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/gpio/ ────────────────────────────────────────────────────┐
+│  GPIO (General Purpose I/O) drivers                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.gpio_pl              - GPIO platform layer                            │
+│  lib.gpio_wake            - GPIO wake-up source handling                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/interrupts/ ──────────────────────────────────────────────┐
+│  Interrupt handling (FIQ, IRQ, VIC)                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.fiq                  - Fast Interrupt (FIQ) handler                   │
+│  lib.irq.usr_1700         - User IRQ handlers (LPC1700)                    │
+│  lib.isr_1700             - Interrupt Service Routines (LPC1700)           │
+│  lib.vic                  - Vectored Interrupt Controller                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/serial/ ──────────────────────────────────────────────────┐
+│  Serial communication (UART, SIO, HOBP bus)                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.hobp_bus         - HOBP ISO K-Line bus driver (vendor library)    │
+│  lib.sio                  - Serial I/O driver                              │
+│  lib.sio_uart             - UART-based SIO implementation                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/storage/ ─────────────────────────────────────────────────┐
+│  Non-volatile storage (flash, NVFS, NVRAM)                                 │
+├────────────────────────────────────────────────────────────────────────────┤
+│  (Currently empty - storage implementations are in BSP/mcu/lpc1700/)       │
+│  Note: lib.nvfs_1700 and lib.iap_1700 are in lpc1700/ folder              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/timers/ ──────────────────────────────────────────────────┐
+│  Timer and real-time clock peripherals                                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.tmr                  - Timer driver                                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/watchdog/ ────────────────────────────────────────────────┐
+│  Watchdog timer driver                                                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.wdog                 - Watchdog driver                                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  HAL LAYER - HARDWARE ABSTRACTION LAYER (~15 LIBRARIES)
+################################################################################
+
+
+--------------------------------------------------------------------------------
+HAL/communication/ - COMMUNICATION PROTOCOLS
+--------------------------------------------------------------------------------
+
+┌─ HAL/communication/can/ ───────────────────────────────────────────────────┐
+│  CAN protocol stack and vehicle integration                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.lib.can.v        - CAN vehicle protocol layer                     │
+│  com.ext.lib.can.v.usr    - CAN user-level vehicle functions               │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ HAL/communication/d2d/ ───────────────────────────────────────────────────┐
+│  Device-to-Device (D2D) communication protocol                             │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.d2d                  - D2D protocol implementation                    │
+│  lib.d2d.code             - D2D code generators/scripts                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ HAL/communication/d2di/ ──────────────────────────────────────────────────┐
+│  D2DI (Device-to-Device Interface via UART for DBALL3)                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.d2di                 - D2DI protocol layer                            │
+│  lib.d2di_uart            - D2DI UART driver                               │
+│                                                                             │
+│  Purpose: DBALL3-specific D2D implementation using UART instead of SIO.    │
+│  Provides bidirectional communication with other modules via serial link.  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ HAL/communication/hobp/ ──────────────────────────────────────────────────┐
+│  Honda OBD Protocol (HOBP) - Type 6 immobilizer bypass                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.hobp_type6       - HOBP Type 6 protocol layer                     │
+│    Provides Honda vehicle immobilizer bypass functionality via ISO K-Line  │
+│    communication. Implements challenge-response authentication, ISK        │
+│    (Immobilizer Secret Key) storage, and programming mode support.         │
+│    Uses com.ext.hobp_bus (BSP layer) for low-level bus communication.     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ HAL/communication/rf/ ────────────────────────────────────────────────────┐
+│  RF (Radio Frequency) communication                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.rf                   - RF transceiver driver                          │
+│  lib.rftd                 - RF transceiver driver (variant 1)              │
+│  lib.rftd2                - RF transceiver driver (variant 2)              │
+│  lib.rf_loop              - RF receive loop/polling                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/io/ - INPUT/OUTPUT ABSTRACTION
+--------------------------------------------------------------------------------
+
+┌─ HAL/io/ ──────────────────────────────────────────────────────────────────┐
+│  Input/output device abstraction                                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.idb                  - Input debounce                                 │
+│  lib.ied                  - Input edge detection                           │
+│  lib.led_usr              - User LED control                               │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/os/ - OPERATING SYSTEM SERVICES
+--------------------------------------------------------------------------------
+
+┌─ HAL/os/scheduler/ ────────────────────────────────────────────────────────┐
+│  Task scheduler and system management                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│  (Scheduler libraries present but not individually inventoried)            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/power/ - POWER MANAGEMENT
+--------------------------------------------------------------------------------
+
+┌─ HAL/power/wake/ ──────────────────────────────────────────────────────────┐
+│  Wake-up and low-power mode management                                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  (Wake-up libraries present but implemented primarily in BSP/mcu/lpc1700/) │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/security/ - SECURITY SERVICES
+--------------------------------------------------------------------------------
+
+┌─ HAL/security/ ────────────────────────────────────────────────────────────┐
+│  Encryption, authentication, and security services                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.secure.lock          - Secure lock mechanism                          │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/storage/ - STORAGE ABSTRACTION
+--------------------------------------------------------------------------------
+
+┌─ HAL/storage/nvfs/ ────────────────────────────────────────────────────────┐
+│  Non-Volatile File System (user-level interface)                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│  (NVFS user interface - implementation is in BSP/mcu/lpc1700/)             │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  ENTRY LAYER - APPLICATION ENTRY POINTS (2 LIBRARIES)
+################################################################################
+
+┌─ ENTRY/ ───────────────────────────────────────────────────────────────────┐
+│  Application entry points and main functions                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.main_1700            - Main application entry (LPC1700)               │
+│    - crt0.s               - C Runtime startup (assembly)                   │
+│    - main.c               - C main function                                │
+│                                                                             │
+│  lib.task_main            - DBALL3 task initialization                     │
+│    - task_main.c          - Task scheduler main entry                      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  INC LAYER - CONFIGURATION AND INCLUDE FILES
+################################################################################
+
+┌─ INC/common/core_release/ ─────────────────────────────────────────────────┐
+│  Common core version and configuration templates                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ INC/dball/core/ ──────────────────────────────────────────────────────────┐
+│  DBALL3 core configuration templates                                       │
+│  - inc.config.d2d/        - D2D configuration for DBALL3                   │
+│  - inc.config.fw/         - Firmware configuration                         │
+│    - config_dball.h       - DBALL3 main configuration                      │
+│    - config_rsr.h         - Remote Start System configuration              │
+│    - config_rsr_feature.h - Remote Start features                          │
+│    - config_rxt.h         - Remote Start Timer configuration               │
+│    - config_d2d.h         - D2D protocol configuration                     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ INC/falcon/core/ ─────────────────────────────────────────────────────────┐
+│  Falcon-specific configurations                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  UNUSED FOLDER - ARCHIVED CODE
+################################################################################
+
+┌─ UNUSED/ ──────────────────────────────────────────────────────────────────┐
+│  Historical preservation of original code organization                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  UNUSED/APP/              - Archived application layer                     │
+│  UNUSED/BSP/              - Archived board support package                 │
+│  UNUSED/ENTRY/            - Archived entry points                          │
+│  UNUSED/HAL/              - Archived hardware abstraction layer            │
+│  UNUSED/INC/              - Archived include files                         │
+│                                                                             │
+│  Purpose: Preserves original folder structure and organization from the    │
+│  legacy Keil project. This folder is NOT used in the CMake build and       │
+│  serves only as historical reference.                                      │
+│                                                                             │
+│  Total: ~77 archived library components (mirrors of all active layers)     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+NAMING CONVENTIONS AND PATTERNS
+================================================================================
+
+The codebase follows consistent naming patterns:
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  PREFIX CONVENTIONS                                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.*                - Internal library component                         │
+│  com.lib.*            - Common/shared library                              │
+│  com.ext.*            - External/vendor library                            │
+│  com.inc.config.*     - Configuration header                               │
+│  inc.config.*         - Include configuration                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  SUFFIX CONVENTIONS                                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  *_1700               - LPC1700 MCU specific implementation                │
+│  *_1766               - LPC1766 MCU specific implementation                │
+│  *.usr                - User-level interface/wrapper                       │
+│  *.v                  - Vendor-provided or vehicle-specific variant        │
+│  *.f                  - Fast variant (optimized implementation)            │
+│  *.machine            - Machine/assembly-level code                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  FILE ORGANIZATION PATTERNS                                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  Multi-file libraries often split by function:                             │
+│    - *_init.c         - Initialization routines                            │
+│    - *_get.c          - Getter functions                                   │
+│    - *_set.c          - Setter functions                                   │
+│    - *_vars.c         - Global variables                                   │
+│    - *_private.h      - Private implementation header                      │
+│                                                                             │
+│  Example: lib.status_system/                                               │
+│    - status_system.c, status_system.h                                      │
+│    - status_system_init.c, status_system_get.c, status_system_set.c       │
+│    - status_system_vars.c, status_system_private.h                         │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+DB3-SPECIFIC FEATURES
+================================================================================
+
+The DB3 (DBALL3) project includes unique features not present in other variants:
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  1. REMOTE START SYSTEM (RSR/RXT)                                          │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.rsr              - Complete remote start state machine and logic      │
+│  lib.rxt              - Remote start timer extension and scheduling        │
+│  lib.rsr_feature      - Feature flag management for remote start options   │
+│                                                                             │
+│  Integration: Works with vehicle detection, sensing, and function control  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  2. WIRE-TO-WIRE (W2W)                                                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.w2w              - Wire-to-wire integration for multiple modules      │
+│                                                                             │
+│  Purpose: Enables cascaded module installations with shared vehicle wire   │
+│  connections between multiple DBALL3 units.                                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  3. D2DI PROTOCOL (Device-to-Device over UART)                             │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.d2di             - D2DI protocol layer                                │
+│  lib.d2di_uart        - D2DI UART driver                                   │
+│                                                                             │
+│  Purpose: DBALL3-specific D2D variant using UART instead of SIO, providing │
+│  bidirectional communication between modules.                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  4. DISPLAY MANAGEMENT                                                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.display          - LED pattern-based user feedback system             │
+│                                                                             │
+│  Purpose: Programming mode visual indicators and status display through    │
+│  on-board LEDs.                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  5. HARDWARE TACHOMETER INTERFACE                                          │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.tach             - Hardware tachometer reading (DB3-specific)         │
+│                                                                             │
+│  Purpose: Direct hardware interface for tachometer signal reading,         │
+│  distinct from software tachometer processing (lib.tacho).                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  6. PRODUCT INFORMATION                                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.about            - Product information and version management         │
+│                                                                             │
+│  Purpose: DBALL3 product identification, version reporting, and feature    │
+│  capability advertisement.                                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+CRITICAL OBSERVATIONS
+================================================================================
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  ARCHITECTURAL STRENGTHS                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│  ✓ Clear three-layer separation (APP/HAL/BSP)                             │
+│  ✓ Consistent naming conventions across all libraries                     │
+│  ✓ MCU abstraction with generic + specific implementations                │
+│  ✓ Vendor code clearly marked (com.ext.* prefix)                          │
+│  ✓ No deep nesting (max 4-5 levels), favoring clarity                     │
+│  ✓ Multi-file libraries organized by function (init/get/set/vars)         │
+│  ✓ Historical preservation in UNUSED/ folder                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  COMMUNICATION STACK EMPHASIS                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  The communication layer is the most developed part of the system:         │
+│                                                                             │
+│  - CAN: Vehicle communication (3 libraries: driver + protocol + user)      │
+│  - D2D: Device-to-device (2 libraries)                                     │
+│  - D2DI: D2D via UART (2 libraries, DBALL3-specific)                       │
+│  - RF: Wireless (4 libraries with variants)                                │
+│  - HOBP: Honda immobilizer (2 libraries: bus + protocol)                   │
+│                                                                             │
+│  Total: 13 communication libraries across HAL and BSP layers               │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  LPC1700 SPECIALIZATION                                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  Strong coupling to NXP LPC1700 MCU family:                                │
+│                                                                             │
+│  - 7 LPC1700-specific libraries in BSP/mcu/lpc1700/                        │
+│  - 4 LPC1700-specific interrupt/ISR handlers                               │
+│  - 2 LPC1700-specific entry points                                         │
+│  - 1 LPC1766 scatter/linker file                                           │
+│                                                                             │
+│  Porting to another MCU would require replacing BSP/mcu/ and updating      │
+│  ENTRY/lib.main_* and peripheral drivers.                                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  FALCON MINIMALISM                                                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│  Unlike detailed documentation suggestions, Falcon features are minimally  │
+│  implemented in this DB3 project:                                          │
+│                                                                             │
+│  APP/features/falcon/                                                      │
+│    ├── core/              (minimal implementation)                         │
+│    ├── core_framework.h                                                    │
+│    └── falcon.c                                                            │
+│                                                                             │
+│  Full Falcon feature set (CAN periodic, hazard control, OBD-CAN, etc.) is  │
+│  NOT present. This suggests Falcon telematics is not a primary feature in  │
+│  the FRD15EU (Ford) DB3 variant.                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  STORAGE DRIVER CONSOLIDATION                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  BSP/peripherals/storage/ folder exists but is empty. Storage drivers are  │
+│  actually consolidated in BSP/mcu/lpc1700/:                                │
+│                                                                             │
+│  - lib.nvfs_1700          (NVFS implementation for LPC1700)                │
+│  - lib.iap_1700           (In-Application Programming - flash access)      │
+│                                                                             │
+│  This suggests storage is tightly coupled to the MCU's flash controller.   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+COMPONENT DISTRIBUTION SUMMARY
+================================================================================
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  LAYER         │  LIBRARIES │  PRIMARY FOCUS                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  APP           │  ~34       │  Features, services, utilities, vehicle logic│
+│  HAL           │  ~15       │  Communication, I/O, OS, power, security     │
+│  BSP           │  ~26       │  MCU drivers, peripherals, bootloader        │
+│  ENTRY         │    2       │  Startup and main entry points               │
+│  INC           │  N/A       │  Headers and configuration files             │
+│  UNUSED        │  ~77       │  Archived versions (inactive)                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  TOTAL ACTIVE  │  ~77       │  Application-ready libraries                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+CMAKE MIGRATION IMPLICATIONS
+================================================================================
+
+For CMake build system configuration, consider:
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  1. LAYER-BASED TARGETS                                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  Create CMake library targets for each layer:                              │
+│    - db3_bsp (BSP layer libraries)                                         │
+│    - db3_hal (HAL layer libraries)                                         │
+│    - db3_app (APP layer libraries)                                         │
+│    - db3_entry (ENTRY layer)                                               │
+│                                                                             │
+│  Enforce dependency order: APP → HAL → BSP                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  2. MCU-SPECIFIC ABSTRACTIONS                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  Create CMake options for MCU selection:                                   │
+│    - MCU_FAMILY=LPC1700                                                    │
+│    - MCU_VARIANT=LPC1766                                                   │
+│                                                                             │
+│  Use conditional compilation for MCU-specific code (*_1700, *_1766)        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  3. FEATURE FLAGS                                                          │
+├────────────────────────────────────────────────────────────────────────────┤
+│  Create CMake options for optional features:                               │
+│    - ENABLE_FALCON (default: OFF, minimal in current codebase)             │
+│    - ENABLE_RSR (remote start system)                                      │
+│    - ENABLE_W2W (wire-to-wire)                                             │
+│    - ENABLE_D2DI (D2D over UART)                                           │
+│    - ENABLE_HOBP (Honda immobilizer bypass)                                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  4. VENDOR LIBRARY HANDLING                                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  External/vendor libraries (com.ext.* prefix) may require:                 │
+│    - Special compiler flags                                                │
+│    - Binary-only distribution (no source)                                  │
+│    - License compliance considerations                                     │
+│                                                                             │
+│  Identified vendor libraries:                                              │
+│    - com.ext.lib.can (CAN controller driver)                               │
+│    - com.ext.lib.can.v (CAN vehicle protocol)                              │
+│    - com.ext.lib.obd_can (OBD-II diagnostics)                              │
+│    - com.ext.hobp_bus (HOBP bus driver)                                    │
+│    - com.ext.hobp_type6 (HOBP protocol)                                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  5. INCLUDE PATH ORGANIZATION                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  Configure include paths for each layer:                                   │
+│    - INC/common/ (common headers)                                          │
+│    - INC/dball/ (DBALL3-specific configurations)                           │
+│    - INC/falcon/ (Falcon configurations)                                   │
+│    - SDK/APP/, SDK/HAL/, SDK/BSP/ (public interfaces)                      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+MIGRATION PRIORITIES FOR CMAKE BUILD
+================================================================================
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 1: CORE INFRASTRUCTURE (CRITICAL PATH)                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  1. BSP/bootloader/          - Memory layout (scatter file → linker script)│
+│  2. BSP/mcu/lpc1700/         - MCU initialization and system functions     │
+│  3. BSP/peripherals/         - Essential peripheral drivers                │
+│  4. ENTRY/                   - Startup code (crt0.s + main.c)              │
+│  5. INC/                     - Configuration headers                       │
+│                                                                             │
+│  Goal: Achieve successful link and boot to main()                          │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 2: SYSTEM SERVICES (ENABLE BASIC OPERATION)                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│  6. APP/framework/           - Core system initialization                  │
+│  7. APP/services/timing/     - Timeout management (used everywhere)        │
+│  8. APP/services/queues/     - Message passing infrastructure              │
+│  9. HAL/os/scheduler/        - Task scheduling                             │
+│  10. APP/services/trace/     - Debug output (for development)              │
+│                                                                             │
+│  Goal: Working OS with logging and inter-module communication              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 3: COMMUNICATION & VEHICLE INTEGRATION                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  11. HAL/communication/can/  - CAN protocol stack                          │
+│  12. HAL/communication/d2di/ - D2DI (if inter-module communication needed) │
+│  13. APP/vehicle/diagnostics/- VIN reading and OBD diagnostics             │
+│  14. APP/vehicle/security/   - DST and immobilizer integration             │
+│                                                                             │
+│  Goal: Communication with vehicle and other modules established            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 4: DBALL3 FEATURES                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│  15. APP/features/dball3/    - Remote start, display, W2W                  │
+│  16. APP/services/outputs/   - Output control (lock, unlock, etc.)         │
+│  17. APP/services/sensors/   - Sensor reading                              │
+│                                                                             │
+│  Goal: Full DBALL3 product functionality                                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  OPTIONAL: FALCON & SPECIALIZED FEATURES                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│  18. APP/features/falcon/    - Telematics (if required)                    │
+│  19. HAL/communication/hobp/ - Honda immobilizer (if targeting Honda)      │
+│  20. HAL/communication/rf/   - RF features (if wireless control needed)    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+NOTES ON VEHICLE-SPECIFIC CUSTOMIZATION
+================================================================================
+
+NOTE: The original documentation mentioned three vehicle-specific libraries
+(com.lib.detect, com.lib.func, com.lib.sense) that should be present. These
+are NOT visible in the current SDK structure exploration and may be:
+
+1. Located outside the SDK/ folder (in VEHICLE_SPECIFIC/ root folder)
+2. Part of libraries not yet migrated
+3. Integrated into existing libraries under different names
+
+For a COMPLETE migration, verify the location and migration status of:
+- com.lib.detect/ (vehicle detection logic)
+- com.lib.func/ (vehicle control functions - lock, unlock, etc.)
+- com.lib.sense/ (vehicle sensor reading - doors, ignition, etc.)
+
+These are CRITICAL for vehicle integration and must be included in the
+CMake build system.
+
+
+================================================================================
+END OF ARCHITECTURE DOCUMENTATION
+================================================================================
+
+For questions or clarifications about the architecture, refer to:
+- This document (as-is structure)
+- docs/db3_architecture.txt (original proposed structure)
+- Source code in src/SDK/ (ground truth)
+- Build output files in build/db3_build/ (compilation artifacts)

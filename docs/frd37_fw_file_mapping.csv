@@ -1,0 +1,106 @@
+fw_path                                                               ,source_path
+                                                                      
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect.h                        ,common\car\com.lib.detect\detect.h           
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_can_search.c             ,common\car\com.lib.detect\detect_can_search.c
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_car_search.c             ,common\car\com.lib.detect\detect_car_search.c
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_ign_search.c             ,common\car\com.lib.detect\detect_ign_search.c
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_init_bp.c                ,common\car\com.lib.detect\detect_init_bp.c   
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_init_nvfs.c              ,common\car\com.lib.detect\detect_init_nvfs.c 
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_is_done.c                ,common\car\com.lib.detect\detect_is_done.c   
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_pgm.c                    ,common\car\com.lib.detect\detect_pgm.c       
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_private.h                ,common\car\com.lib.detect\detect_private.h   
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_vars.c                   ,common\car\com.lib.detect\detect_vars.c      
+\code\VEHICLE_SPECIFIC\com.lib.detect\detect_vin_search.c             ,common\car\com.lib.detect\detect_vin_search.c
+                                                                                                  
+\code\VEHICLE_SPECIFIC\com.lib.func\frd_func_wakeup.c                 ,common\car\com.lib.func\frd_func_wakeup.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func.h                            ,common\car\com.lib.func\func.h                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_arm.c                        ,common\car\com.lib.func\func_arm.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_arm_OLD.c                    ,common\car\com.lib.func\func_arm_OLD.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_can_wake.c                   ,common\car\com.lib.func\func_can_wake.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_cfg.h                        ,common\car\com.lib.func\func_cfg.h                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_cmd.c                        ,common\car\com.lib.func\func_cmd.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_cmd_init.c                   ,common\car\com.lib.func\func_cmd_init.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_disarm.c                     ,common\car\com.lib.func\func_disarm.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_domelight.c                  ,common\car\com.lib.func\func_domelight.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_eips.c                       ,common\car\com.lib.func\func_eips.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_front_wrd.c                  ,common\car\com.lib.func\func_front_wrd.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_gas_cap.c                    ,common\car\com.lib.func\func_gas_cap.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_hazard_ctrl.c                ,common\car\com.lib.func\func_hazard_ctrl.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_init.c                       ,common\car\com.lib.func\func_init.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_light.c                      ,common\car\com.lib.func\func_light.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_light_init.c                 ,common\car\com.lib.func\func_light_init.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_lock.c                       ,common\car\com.lib.func\func_lock.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_oem.c                        ,common\car\com.lib.func\func_oem.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_prc_init.c                   ,common\car\com.lib.func\func_prc_init.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_private.h                    ,common\car\com.lib.func\func_private.h                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_rear_wrd.c                   ,common\car\com.lib.func\func_rear_wrd.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_rs.c                         ,common\car\com.lib.func\func_rs.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_rs_pts_callback.c            ,common\car\com.lib.func\func_rs_pts_callback.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_trunk_release.c              ,common\car\com.lib.func\func_trunk_release.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_unlock_all.c                 ,common\car\com.lib.func\func_unlock_all.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_vars.c                       ,common\car\com.lib.func\func_vars.c                    
+\code\VEHICLE_SPECIFIC\com.lib.func\func_wru.c                        ,common\car\com.lib.func\func_wru.c                    
+                                                                                                  ,                                       
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense.h                          ,common\car\com.lib.sense\sense.h                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_brake.c                    ,common\car\com.lib.sense\sense_brake.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_doors.c                    ,common\car\com.lib.sense\sense_doors.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_handbrake.c                ,common\car\com.lib.sense\sense_handbrake.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_hazard.c                   ,common\car\com.lib.sense\sense_hazard.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_hood.c                     ,common\car\com.lib.sense\sense_hood.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_ignition.c                 ,common\car\com.lib.sense\sense_ignition.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_init.c                     ,common\car\com.lib.sense\sense_init.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_private.h                  ,common\car\com.lib.sense\sense_private.h                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_rke.c                      ,common\car\com.lib.sense\sense_rke.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_rpm.c                      ,common\car\com.lib.sense\sense_rpm.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_skd.c                      ,common\car\com.lib.sense\sense_skd.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_speed.c                    ,common\car\com.lib.sense\sense_speed.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_trunk.c                    ,common\car\com.lib.sense\sense_trunk.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_vars.c                     ,common\car\com.lib.sense\sense_vars.c                                        
+\code\VEHICLE_SPECIFIC\com.lib.sense\sense_windows_pos.c              ,common\car\com.lib.sense\sense_windows_pos.c                                        
+                                                                                                  ,
+\code\VEHICLE_SPECIFIC\lib.fw.ds4\lib.fw\fw.h                         ,cmall\lib.fw\fw.h                     
+\code\VEHICLE_SPECIFIC\lib.fw.ds4\lib.fw\fw_dbg.c                     ,cmall\lib.fw\fw_dbg.c                     
+\code\VEHICLE_SPECIFIC\lib.fw.ds4\lib.fw\fw_init.c                    ,cmall\lib.fw\fw_init.c                     
+\code\VEHICLE_SPECIFIC\lib.fw.ds4\lib.fw\fw_init_reset.c              ,cmall\lib.fw\fw_init_reset.c                     
+\code\VEHICLE_SPECIFIC\lib.fw.ds4\lib.fw\fw_option.c                  ,cmall\lib.fw\fw_option.c                     
+\code\VEHICLE_SPECIFIC\lib.fw.ds4\lib.fw\fw_private.h                 ,cmall\lib.fw\fw_private.h                  
+                                                                                                  ,
+\code\VEHICLE_SPECIFIC\lib.fw.db3\lib.fw\fw.h                         ,dball\lib.fw\fw.h                     
+\code\VEHICLE_SPECIFIC\lib.fw.db3\lib.fw\fw_dbg.c                     ,dball\lib.fw\fw_dbg.c                     
+\code\VEHICLE_SPECIFIC\lib.fw.db3\lib.fw\fw_init.c                    ,dball\lib.fw\fw_init.c                     
+\code\VEHICLE_SPECIFIC\lib.fw.db3\lib.fw\fw_init_reset.c              ,dball\lib.fw\fw_init_reset.c                     
+\code\VEHICLE_SPECIFIC\lib.fw.db3\lib.fw\fw_option.c                  ,dball\lib.fw\fw_option.c                     
+\code\VEHICLE_SPECIFIC\lib.fw.db3\lib.fw\fw_private.h                 ,dball\lib.fw\fw_private.h 
+
+\code\VEHICLE_SPECIFIC\lib.config.db3\com.inc.config.fw\config_can.h                 ,common\com.inc.config.fw\config_can.h
+\code\VEHICLE_SPECIFIC\lib.config.db3\com.inc.config.fw\config_dbg.h                 ,common\com.inc.config.fw\config_dbg.h
+\code\VEHICLE_SPECIFIC\lib.config.db3\com.inc.config.fw\config_firmware.h            ,common\com.inc.config.fw\config_firmware.h
+\code\VEHICLE_SPECIFIC\lib.config.db3\com.inc.config.fw\config_gpio.h                ,common\com.inc.config.fw\config_gpio.h
+\code\VEHICLE_SPECIFIC\lib.config.db3\com.inc.config.fw\config_obd_can.h             ,common\com.inc.config.fw\config_obd_can.h
+\code\VEHICLE_SPECIFIC\lib.config.db3\com.inc.config.fw\config_prog.h                ,common\com.inc.config.fw\config_prog.h
+\code\VEHICLE_SPECIFIC\lib.config.db3\com.inc.config.fw\config_pts_ctl.h             ,common\com.inc.config.fw\config_pts_ctl.h
+\code\VEHICLE_SPECIFIC\lib.config.db3\com.inc.config.fw\config_status.h              ,common\com.inc.config.fw\config_status.h
+
+\code\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_can.h                 ,common\com.inc.config.fw\config_can.h
+\code\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_dbg.h                 ,common\com.inc.config.fw\config_dbg.h
+\code\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_firmware.h            ,common\com.inc.config.fw\config_firmware.h
+\code\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_gpio.h                ,common\com.inc.config.fw\config_gpio.h
+\code\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_obd_can.h             ,common\com.inc.config.fw\config_obd_can.h
+\code\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_prog.h                ,common\com.inc.config.fw\config_prog.h
+\code\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_pts_ctl.h             ,common\com.inc.config.fw\config_pts_ctl.h
+\code\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_status.h              ,common\com.inc.config.fw\config_status.h
+
+\code\VEHICLE_SPECIFIC\lib.config.db3\inc.config.d2d\config_d2d.h	  ,dball\inc.config.d2d\config_d2d.h    
+\code\VEHICLE_SPECIFIC\lib.config.ds4\inc.config.d2d\config_d2d.h	  ,dball\inc.config.d2d\config_d2d.h
+
+ 
+\code\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_800_gpio.h	  ,cmall\inc.config_fw\config_800_gpio.h	 
+\code\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_933.h	      ,cmall\inc.config_fw\config_933.h	     
+\code\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_933_gpio.h	  ,cmall\inc.config_fw\config_933_gpio.h	 
+\code\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_as_feature.h	  ,cmall\inc.config_fw\config_as_feature.h	 
+\code\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_cm800.h	      ,cmall\inc.config_fw\config_cm800.h	     
+\code\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_dei_feature.h  ,cmall\inc.config_fw\config_dei_feature.h 
+\code\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_ngmm_feature.h ,cmall\inc.config_fw\config_ngmm_feature.h
+
+
+                    

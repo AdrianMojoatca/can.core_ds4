@@ -1,0 +1,123 @@
+;============================================================================;
+;                         XK603 Linker Scatter File                          ;
+;============================================================================;
+; $Id: app_cm800.sct 33257 2015-08-19 12:45:49Z martin.bouchard $
+;============================================================================;
+
+LR_CODE_0                  0x00000000        0x8000
+{
+  ER_CODE_0                0x00000000        0x40  ; Flash    : Code
+    {
+      crt0.o (RESET , +First)
+    }
+
+  ER_NVRAM_IMAGE_FLASH_0    0x00006000 UNINIT   0x1000      ; Flash     : NVRAM FLASH Block #0 !!! (must be 4k aligned and 4k size) !!!
+    {
+      * (NVRAM_IMAGE_FLASH_0)
+    }
+
+  ER_NVRAM_IMAGE_FLASH_1    0x00007000 UNINIT   0x1000      ; Flash     : NVRAM FLASH Block #1 !!! (must be 4k aligned and 4k size) !!! 
+    { 
+      * (NVRAM_IMAGE_FLASH_1)
+    }
+
+}
+
+;-----------------------------------------------------------------------------;
+
+LR_ABOUT                  0x00008000        0x100
+{
+  ER_ABOUT_FLASH          0x00008000 0x100  ;
+    {
+      * (ABOUT_FLASH, +First)
+    }
+}
+
+;-----------------------------------------------------------------------------;
+
+LR_APP_CODE                 0x00008100  0x37F00           ;max address is 0x40000 ; Flash    : Code
+{
+  ER_APP                    0x00008100  0x37F00           ;max address is 0x40000
+    {
+      *.o (APP_VECTOR, +First)
+
+      *      (InRoot$$Sections)
+
+      .ANY   (+RO)
+    }
+	
+
+  ER_RAM_NVRAM_IAP_WR_BUFF  0x10000000          0x0100      ; On-Chip   : NVRAM IAP 256-byte write buffer : !!! (must be 256 aligned and 256 size) !!! 
+    {                                        
+      * (NVRAM_IAP_WR_BUFF) 
+    }
+
+
+;-------------------------------------------------------------------------------------
+;HEAP SECTIONS
+;-------------------------------------------------------------------------------------
+  ER_RAM_IAP_COMMAND       0x10007F00 EMPTY  0x100        ; On chip - RAM used by IAP command handler
+    {
+    } 
+  
+  ER_OS_HEAP_0             0x10000120 EMPTY  0x00007DE0   ; On chip : Heap 0 sections
+    {
+    }
+
+  
+  ER_OS_HEAP_1             0x20080000 EMPTY  0x00002000   ; On chip : Heap 1 sections
+    {
+    } 
+    
+  
+  ER_OS_HEAP_2             0x20082000 EMPTY  0x1000       ; On chip : Heap 2 sections
+    {
+    }
+
+;-------------------------------------------------------------------------------------
+;RAM SECTIONS
+;-------------------------------------------------------------------------------------
+
+  ER_RAM_APP_ETHERNET       0x20083000          0x1000      ; Ethernet  : General purpose 
+    {
+      .ANY (+RW +ZI)
+    }
+
+  RW_IRAM_V 0x2007E000 0x00000100 ; RAM : On-Chip
+    {
+		* (ram_irq_vectors)
+    }
+
+  ER_RAM_APP_USB            0x2007D000          0x1000      ; USB       : General purpose 
+    {
+      .ANY (+RW +ZI)
+    }
+
+  
+  ER_RAM_APP_VWDOG_RESET_LINE    0x10000100 EMPTY    0x08      ; On-Chip   : VWDOG APP Reset source line number
+    {
+      
+    }
+
+  ER_RAM_APP_VWDOG_RESET_SOURCE  0x10000108 EMPTY    0x08      ; On-Chip   : VWDOG APP Reset source
+    {
+      
+    }
+
+  ER_RAM_BOOT_WDOG_RESET_ID      0x10000110 EMPTY    0x08      ; On-Chip   : WDOG APP Reset identification code
+    {
+      
+    }
+ 
+  ER_RAM_APP_WDOG_RESET_ID       0x10000118 EMPTY    0x08      ; On-Chip   : WDOG APP Reset identification code
+    {
+      
+    }
+
+  ER_NVRAM_IMAGE_CACHE      0x2007C000 UNINIT   0x1000      ; USB       : NVRAM CACHE Block !!! (must be 4k aligned and 4k size) !!!
+    {
+      * (NVRAM_IMAGE_CACHE)
+    }
+
+}
+

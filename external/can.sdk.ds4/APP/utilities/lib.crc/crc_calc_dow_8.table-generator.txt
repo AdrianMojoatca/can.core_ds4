@@ -1,0 +1,40 @@
+// This is the 'C' code used to generate the CRC table for DOW-8 CRC (Poly = 0x8C)
+
+#include <stdio.h>
+
+#define POLY 0x8C
+
+int main(void)
+{
+  int      i     ;
+  int      index ;
+  unsigned x     ;
+  unsigned temp  ;
+  
+  for (index = 0 ; index < 256 ; ++index)
+    {
+      temp = index ;
+  
+      for (i = 0 ; i < 8 ; i++)
+        {
+          x = temp & 1 ;
+
+          temp >>= 1 ;
+          
+          if (x != 0)
+            {
+              temp ^= POLY ;
+            }
+        }
+  
+      printf ("0x%02X, ", temp) ;
+
+      if ((index & 7) == 7)
+        {
+          putchar ('\n') ;
+        }
+    }
+
+  return 0 ;
+}
+

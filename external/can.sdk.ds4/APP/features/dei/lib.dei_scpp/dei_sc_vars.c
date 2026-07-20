@@ -1,0 +1,48 @@
+/*==========================================================================*/
+// $Id: dei_sc_vars.c 33256 2015-08-19 12:44:53Z martin.bouchard $
+/*==========================================================================*/
+
+/*==========================================================================*/
+/*                             I N C L U D E S                              */
+/*==========================================================================*/
+#include "dei_sc_private.h"
+/*==========================================================================*/
+/*      D E F I N E S  -  E N U M E R A T I O N S  -  T Y P E D E F S       */
+/*==========================================================================*/
+
+/*==========================================================================*/
+/*                  F U N C T I O N   P R O T O T Y P E S                   */
+/*==========================================================================*/
+
+/*==========================================================================*/
+/*                            V A R I A B L E S                             */
+/*==========================================================================*/
+
+Dei_Sc                  dei_sc                             ; 
+Sync_Count_Obj          dei_sc_sync_count[ DEI_RF_ID_COUNT];
+UInt32                  dei_sc_current_sn                  ;
+Dei_Sc_Info             dei_sc_info                        ;
+Dei_Sc_Mode             dei_sc_mode                        ;
+Dei_Sc_NGRF_Mode        dei_sc_ngrf_mode                   ;
+Q                       dei_sc_tx_q_pending                ;
+Q                       dei_sc_tx_q_free                   ;
+Boolean                 dei_sc_is_silent                   ;
+Timeout                 dei_sc_timeout_pagging             ;
+Timeout                 dei_sc_timeout_lock                ;
+Timeout                 dei_sc_timeout_sensor_adjust       ;
+UInt32                  dei_led_pattern                    ;
+Vrtc                    dei_sc_sensor_adjust_mode_vrtc     ;
+unsigned                dei_sc_cmd_release_tmr_cnt         ;
+UInt8 					dei_sc_sensor_adjust_hhu					 ;
+
+Boolean 				dei_sc_ext_page_update;
+
+UInt8 dei_sc_alert_event;
+System_Type              scpp_system_type;
+UInt8			dei_sc_hhu_num;
+
+/*==========================================================================*/
+/*                 F U N C T I O N   D E F I N I T I O N S                  */
+/*==========================================================================*/
+
+

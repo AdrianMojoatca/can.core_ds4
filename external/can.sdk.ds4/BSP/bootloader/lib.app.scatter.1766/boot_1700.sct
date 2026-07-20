@@ -1,0 +1,110 @@
+;============================================================================;
+;                         XK603 Linker Scatter File                          ;
+;============================================================================;
+; $Id: boot_1700.sct 33257 2015-08-19 12:45:49Z martin.bouchard $
+;============================================================================;
+
+LR_CODE_0                  0x00000000
+{
+  ER_CODE_0                0x00000000    0x6000           ; Flash    : Code
+    {
+      crt0.o (RESET , +First)
+      *      (InRoot$$Sections)
+	  *.o    (+RO)
+      .ANY   (+RO)
+	}
+
+  ER_NVRAM_IMAGE_FLASH    0x00006000 EMPTY  0  ; 0x2000 bytes Flash     : NVRAM FLASH Block #0 !!! (must be 4k aligned and 4k size) !!!
+    {
+    }
+
+  ER_ABOUT             0x00008000 EMPTY 0 ;  0x100 bytes
+    {
+    }
+	
+  ER_APP_RESET     0x00008100 EMPTY  0        ;max address is 0x40000
+    {
+           ; firmware THUMB code goes here
+    }	
+	
+
+  ER_RAM_NVRAM_IAP_WR_BUFF  0x10000000  EMPTY  0 ; 0x0100 bytes      ; On-Chip   : NVRAM IAP 256-byte write buffer : !!! (must be 256 aligned and 256 size) !!! 
+    {                                        
+    }
+  ER_RAM_APP_VWDOG_RESET_LINE    0x10000100 EMPTY    0x08      ; On-Chip   : VWDOG APP Reset source line number
+    {
+      
+    }
+
+  ER_RAM_APP_VWDOG_RESET_SOURCE  0x10000108 EMPTY    0x08      ; On-Chip   : VWDOG APP Reset source
+    {
+      
+    }
+
+  ER_RAM_BOOT_WDOG_RESET_ID      0x10000110 EMPTY    0x08      ; On-Chip   : WDOG APP Reset identification code
+    {
+      
+    }
+ 
+  ER_RAM_APP_WDOG_RESET_ID       0x10000118 EMPTY    0x08      ; On-Chip   : WDOG APP Reset identification code
+    {
+      
+    }
+
+  ER_BOOT_PERSISTANT       0x10000120 0xE0 ; //  0x00007DE0   ; On chip : Heap 0 sections
+    {
+;no vars	  nvfs.o (+RW +ZI)
+;moved to ER_BOOT_RAM	  bfs.o (+RW +ZI)
+	  bflash.o (+RW +ZI)
+;no vars	  crc16.o (+RW +ZI)
+;no vars	  wtea.o (+RW+ZI)
+    }
+
+  ER_NVRAM_IMAGE_CACHE      0x10001000 EMPTY 0 ; //  0x1000      ; USB       : NVRAM CACHE Block !!! (must be 4k aligned and 4k size) !!!
+    {
+    }
+	
+  ER_OS_HEAP_1           0x10002000 EMPTY 0  ; // 0x5F00
+    {
+	}
+
+  ER_RAM_IAP_COMMAND       0x10007F00 EMPTY 0 ; // 0x100        ; On chip - RAM used by IAP command handler
+    {
+    } 
+
+
+  ER_RAM_AHB               0x2007C000  EMPTY  0 ; // 0x6000      ; USB and ETH      : General purpose 
+    {
+	
+    }
+
+	
+  ER_BOOT_UNINIT           0x20082000 UNINIT  0x0600
+    {
+	  boot_vars.o (+RW +ZI)
+    }	
+  ER_BOOT_RAM               0x20082600  0x1A00
+    {
+	 *.o (+RW +ZI)
+	 .ANY (+RW +ZI) 
+	}
+
+    	
+}
+
+
+
+;-------------------------------------------------------------------------------------
+;HEAP SECTIONS
+;-------------------------------------------------------------------------------------
+  
+
+
+;-------------------------------------------------------------------------------------
+;RAM SECTIONS
+;-------------------------------------------------------------------------------------
+
+
+
+	
+

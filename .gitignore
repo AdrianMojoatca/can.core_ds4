@@ -1,0 +1,11 @@
+# build outputs
+build/
+*.o
+*.crf
+*.__i
+*.d
+*.lnp
+*.htm
+*.map
+*.axf
+*.bak

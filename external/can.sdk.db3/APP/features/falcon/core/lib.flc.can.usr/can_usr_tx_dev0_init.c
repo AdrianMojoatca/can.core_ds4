@@ -1,0 +1,66 @@
+/*<#======================================================================#>*/
+/*                          FILE HEADER GOES HERE                           */
+/*<#======================================================================#>*/
+
+/*==========================================================================*/
+// $Id: can_usr_tx_dev0_init.c 19497 2013-02-25 13:41:22Z martin.bouchard $
+/*==========================================================================*/
+
+/*==========================================================================*/
+/*                             I N C L U D E S                              */
+/*==========================================================================*/
+#include "can_usr_private.h"
+/*==========================================================================*/
+/*      D E F I N E S  -  E N U M E R A T I O N S  -  T Y P E D E F S       */
+/*==========================================================================*/
+
+/*==========================================================================*/
+/*                  F U N C T I O N   P R O T O T Y P E S                   */
+/*==========================================================================*/
+static void timeout_tx_slow_dev0( void );
+/*==========================================================================*/
+/*                            V A R I A B L E S                             */
+/*==========================================================================*/
+
+/*==========================================================================*/
+/*                 F U N C T I O N   D E F I N I T I O N S                  */
+/*==========================================================================*/
+
+//--------------------------------------------------------------------------//
+
+void can_usr_tx_dev0_init( void )
+{
+    Tsk tsk ; 
+    UInt32 tx_buffer_size;
+    
+    can_usr[CAN_DEV_0].tx_can_slow = can_tx_create( can_usr[CAN_DEV_0].can_dev , CAN_TX_0 ) ;    
+    can_usr[CAN_DEV_0].tx_can_fast = can_tx_create( can_usr[CAN_DEV_0].can_dev , CAN_TX_1 ) ;
+	
+	can_usr[CAN_DEV_0].tx_res      = os_res_create();
+
+	can_usr_one_shot_timeout_init(CAN_DEV_0);
+	
+	//CAN_BASE_0[CANMOD]  |= (1u <<3)     ;//local priority    
+    //CAN_BASE_0[CANTFI2] &= ~(0x000000FF);//high priority
+    //CAN_BASE_0[CANTFI1] |=  (0x00000001);//low priority
+
+    
+    tx_buffer_size = CAN_CFG_CAN_DEV_0_TX_BUFFER_SIZE;
+
+    if(can_usr[CAN_DEV_0].tx_use_buffer && (tx_buffer_size > 0u))
+    {    
+        can_usr[CAN_DEV_0].tx_pipe = pipe_create( tx_buffer_size , sizeof( struct s_Can_Msg ) ) ;
+                
+        tsk = os_tsk_create( can_usr_tx_tsk , CAN_DEV_0_TX_TSK_PRI  , CAN_DEV_0_TX_TSK_STK  , 0 , "can_dev_0_tx"  ) ;    
+        
+        os_tsk_start( tsk , CAN_DEV_0 );             
+    }
+    else
+    {
+        can_usr[CAN_DEV_0].tx_use_buffer = FALSE;
+    }
+}
+
+//--------------------------------------------------------------------------//
+
+

@@ -1,0 +1,862 @@
+================================================================================
+  CURRENT ARCHITECTURE DOCUMENTATION - FRD15EU_DS4 PROJECT
+================================================================================
+
+Date: March 18, 2026
+Project: FRD15EU DS4 Embedded Firmware
+Build System: Keil uVision 4 (legacy) → CMake migration in progress
+MCU Target: NXP LPC1766 (ARM Cortex-M3)
+Total Source Files: ~2,322 files
+Total Libraries: ~195 library components
+
+This document describes the CURRENT state of the architecture after the initial
+migration to the layered structure within `.cmake_migration/code/src/SDK/`.
+
+================================================================================
+ARCHITECTURAL OVERVIEW
+================================================================================
+
+The codebase follows a three-layer OSI-like architecture with clear separation
+of concerns:
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  APP (Application Layer)                                                 │
+│  High-level application logic, features, services, and vehicle control  │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↕
+┌─────────────────────────────────────────────────────────────────────────┐
+│  HAL (Hardware Abstraction Layer)                                       │
+│  Hardware abstraction, communication protocols, OS services             │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↕
+┌─────────────────────────────────────────────────────────────────────────┐
+│  BSP (Board Support Package)                                            │
+│  Low-level hardware drivers, peripherals, MCU-specific code             │
+└─────────────────────────────────────────────────────────────────────────┘
+
+ADDITIONAL LAYERS:
+- **ENTRY**: Application entry points (main functions, task initialization)
+- **INC**: Configuration headers and build-time configuration files
+- **UNUSED**: Deprecated/legacy libraries retained for reference
+
+
+================================================================================
+DIRECTORY STRUCTURE
+================================================================================
+
+.cmake_migration/code/src/SDK/
+├── APP/                          # Application Layer (81 libraries)
+│   ├── features/                 # Product features (DEI, Falcon, NGMM)
+│   ├── framework/                # System framework and status management
+│   ├── services/                 # Core services (queues, events, sensors, etc.)
+│   ├── utilities/                # Utility libraries (CRC, bitfield, etc.)
+│   └── vehicle/                  # Vehicle-specific logic
+│       ├── diagnostics/          # VIN, OBD-CAN diagnostics
+│       ├── programming/          # Device programming and configuration
+│       └── security/             # DST, key management, encryption
+│
+├── BSP/                          # Board Support Package (37 libraries)
+│   ├── bootloader/               # Bootloader and memory scatter files
+│   ├── mcu/                      # MCU-specific implementations
+│   │   ├── device/               # Device identification
+│   │   └── lpc1700/              # LPC1700-specific drivers
+│   └── peripherals/              # Peripheral drivers
+│       ├── analog/               # ADC, DAC
+│       ├── can/                  # CAN bus driver
+│       ├── gpio/                 # GPIO control
+│       ├── interrupts/           # Interrupt handlers (FIQ, IRQ, VIC)
+│       ├── serial/               # UART/SIO/HOBP bus drivers
+│       ├── timers/               # RTC, TMR, VRTC
+│       └── watchdog/             # Watchdog timer
+│
+├── HAL/                          # Hardware Abstraction Layer (24 libraries)
+│   ├── communication/            # Communication protocols
+│   │   ├── can/                  # CAN protocol stack
+│   │   ├── d2d/                  # Device-to-Device protocol
+│   │   ├── hobp/                 # Honda OBD Protocol
+│   │   └── rf/                   # RF communication (Keeloq, RFTD)
+│   ├── io/                       # I/O abstraction (LED, input/output drivers)
+│   ├── os/                       # OS services
+│   │   └── scheduler/            # Task scheduler, reset handler
+│   ├── power/                    # Power management
+│   │   └── wake/                 # Wake-up and low-power mode handling
+│   ├── security/                 # Security services
+│   │   └── (AES128, AID/DHP)    # Encryption and authentication
+│   └── storage/                  # Storage abstraction
+│       └── nvfs/                 # Non-volatile file system
+│
+├── ENTRY/                        # Entry Points (2 libraries)
+│   ├── lib.main_1700/            # Main application entry
+│   └── lib.ngmm_task_main/       # NGMM task initialization
+│
+├── INC/                          # Include/Configuration Files (9 collections)
+│   ├── cmall/                    # CMall-specific configuration headers
+│   │   ├── core/                 # Core config (version, D2D, GPIO, dummy)
+│   │   └── inc.config_fw/        # Firmware configuration (GPIO, features)
+│
+└── UNUSED/                       # Deprecated/Legacy (42 libraries)
+    ├── APP/                      # Unused application libraries
+    ├── BSP/                      # Unused BSP libraries (flash, old GPIO)
+    ├── HAL/                      # Unused HAL libraries (old OS, wake, NVFS)
+    └── INC/                      # Unused configuration headers
+
+
+================================================================================
+DETAILED LIBRARY INVENTORY
+================================================================================
+
+
+################################################################################
+###  APP LAYER - APPLICATION LOGIC (81 LIBRARIES)
+################################################################################
+
+
+--------------------------------------------------------------------------------
+APP/features/ - PRODUCT FEATURES
+--------------------------------------------------------------------------------
+
+┌─ APP/features/dei/ ────────────────────────────────────────────────────────┐
+│  Directed Electronics Inc (DEI) product features                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.dei_core             ( 1 file  ) - DEI core functionality             │
+│  lib.dei_rs               (53 files ) - Remote Start system                │
+│  lib.dei_scpp             (91 files ) - Security Control & Programming     │
+│  lib.dei_ss               (35 files ) - Security System                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/features/falcon/core/ ────────────────────────────────────────────────┐
+│  Falcon-specific features (telematics/tracking)                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.flc.can.per          (10 files ) - CAN periodic messages              │
+│  lib.flc.can.sync         (10 files ) - CAN synchronization                │
+│  lib.flc.can.usr          (22 files ) - CAN user-level functions           │
+│  lib.flc.dl               ( 8 files ) - Datalink/communication layer       │
+│  lib.flc.hazard           ( 9 files ) - Hazard light control               │
+│  lib.flc.key_wrap         ( 6 files ) - Key wrapping/encryption            │
+│  lib.flc.led.detect       ( 2 files ) - LED detection logic                │
+│  lib.flc.light.format     ( 8 files ) - Light format/protocol handler      │
+│  lib.flc.nvfs.log         ( 7 files ) - NVFS logging                       │
+│  lib.flc.obd_can          (38 files ) - OBD-II CAN integration             │
+│  lib.flc.pipe             ( 4 files ) - Data pipe/buffer management        │
+│  lib.flc.process          (13 files ) - Process management                 │
+│  lib.flc.sense_rs_can     (25 files ) - Remote start sensing via CAN       │
+│  lib.flc.timeout_q        ( 9 files ) - Timeout queue management           │
+│  lib.flc.tr               ( 7 files ) - Transmission control               │
+│  lib.flc.tsk.rs           (12 files ) - Remote start task management       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/features/general/ ────────────────────────────────────────────────────┐
+│  General product features                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.about                ( 4 files ) - Product information/about screen   │
+│  lib.brand                ( 6 files ) - Brand identification               │
+│  lib.display              (12 files ) - Display management                 │
+│  lib.feature              ( 8 files ) - Feature flag management            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/features/ngmm/ ───────────────────────────────────────────────────────┐
+│  NGMM (Next Generation Module Management) features                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.ngmm_feature         (11 files ) - NGMM feature implementation        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+APP/framework/ - SYSTEM FRAMEWORK
+--------------------------------------------------------------------------------
+
+┌─ APP/framework/ ───────────────────────────────────────────────────────────┐
+│  Core system framework and status management                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.status_system        ( 7 files ) - System-level status management     │
+│  lib.system               (35 files ) - Core system services               │
+│  lib.system_ui            ( 6 files ) - System UI/user interface           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+APP/services/ - CORE SERVICES
+--------------------------------------------------------------------------------
+
+┌─ APP/services/control/ ────────────────────────────────────────────────────┐
+│  Control and command processing services                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.cmd                  (17 files ) - Command interpreter/dispatcher     │
+│  lib.ctl.dl               (12 files ) - Datalink control                   │
+│  lib.pts_ctl              ( 3 files ) - PTS (Pass-Thru) control            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/events/ ─────────────────────────────────────────────────────┐
+│  Event management and notification services                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.evt                  ( 8 files ) - Event manager                      │
+│  lib.notify               (10 files ) - Notification service               │
+│  lib.sense.notify         (21 files ) - Sensor notification bridge         │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/outputs/ ────────────────────────────────────────────────────┐
+│  Output control services                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.led                  (15 files ) - LED control                        │
+│  lib.out                  (11 files ) - Generic output control             │
+│  lib.out_fifo             ( 7 files ) - Output FIFO queue                  │
+│  lib.out_q                ( 9 files ) - Output queue management            │
+│  lib.siren                ( 7 files ) - Siren control                      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/queues/ ─────────────────────────────────────────────────────┐
+│  Queue and execution services                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.exec                 (10 files ) - Execution queue                    │
+│  lib.fifo                 ( 7 files ) - FIFO queue implementation          │
+│  lib.q                    (10 files ) - Generic queue                      │
+│  lib.reg.q                (10 files ) - Registry queue                     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/sensors/ ────────────────────────────────────────────────────┐
+│  Sensor reading and processing services                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.ecm_vtacho           (15 files ) - ECM virtual tachometer             │
+│  lib.sense_rs             (30 files ) - Remote start sensor interface      │
+│  lib.sensor               (13 files ) - Generic sensor interface           │
+│  lib.sensor_proto         (12 files ) - Sensor protocol handler            │
+│  lib.speed                ( 9 files ) - Speed sensor processing            │
+│  lib.tach                 ( 2 files ) - Tachometer interface               │
+│  lib.tacho                ( 9 files ) - Tachometer processing              │
+│  lib.temperature          ( 6 files ) - Temperature sensor processing      │
+│  lib.voltage              ( 8 files ) - Voltage sensor processing          │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/status/ ─────────────────────────────────────────────────────┐
+│  Status monitoring and reporting services                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.bus.status           (25 files ) - Bus status monitoring              │
+│  lib.status               (20 files ) - System status management           │
+│  lib.status.req           (33 files ) - Status request/response handling   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/timing/ ─────────────────────────────────────────────────────┐
+│  Timing and timeout services                                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.sync_count           ( 8 files ) - Synchronous counter                │
+│  lib.timeout              (11 files ) - Timeout management                 │
+│  lib.timeout.f            ( 7 files ) - Fast timeout management            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/services/trace/ ──────────────────────────────────────────────────────┐
+│  Debug and trace services                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.dbgcli               (17 files ) - Debug CLI and trace output         │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+APP/utilities/ - UTILITY LIBRARIES
+--------------------------------------------------------------------------------
+
+┌─ APP/utilities/ ───────────────────────────────────────────────────────────┐
+│  General-purpose utility libraries                                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.bitfield             ( 2 files ) - Bitfield manipulation utilities    │
+│  lib.crc                  ( 6 files ) - CRC calculation (CRC16, CRC32)     │
+│  lib.eips                 (26 files ) - EIPS (Enhanced Idle Prevention)    │
+│  lib.npc                  (11 files ) - NPC (Non-Persistent Counter)       │
+│  lib.prk                  (10 files ) - Parking light controller           │
+│  lib.reg                  (16 files ) - Registry/function registration     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+APP/vehicle/ - VEHICLE-SPECIFIC LOGIC
+--------------------------------------------------------------------------------
+
+┌─ APP/vehicle/diagnostics/ ─────────────────────────────────────────────────┐
+│  Vehicle diagnostics and identification                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.lib.obd_can      (38 files ) - OBD-II CAN diagnostics             │
+│  lib.vin                  (37 files ) - VIN reading and parsing            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/vehicle/programming/ ─────────────────────────────────────────────────┐
+│  Device programming and configuration                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.prg                  (16 files ) - Programming mode and menu          │
+│  lib.prg_out              (43 files ) - Output programming configuration   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ APP/vehicle/security/ ────────────────────────────────────────────────────┐
+│  Vehicle security and immobilizer integration                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.lib.dst              (26 files ) - DST (Digital Secure Transceiver)   │
+│  com.lib.dstcrypt         (11 files ) - DST encryption/decryption          │
+│  com.lib.dst_bus          (24 files ) - DST bus communication              │
+│  com.lib.key              (19 files ) - Key management                     │
+│  lib.fob.ctrl.dei         ( 3 files ) - DEI key fob control                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+⚠️  NOTE: Vehicle-Specific Customization Libraries
+────────────────────────────────────────────────────────────────────────────
+According to proposed_architecture.txt, the following THREE libraries must
+be customized for each vehicle model:
+
+1. com.lib.detect/   - Vehicle detection (CAN, IGN, VIN identification)
+2. com.lib.func/     - Vehicle control functions (lock, unlock, arm)
+3. com.lib.sense/    - Vehicle sensor reading (doors, ignition, etc.)
+
+⚠️  MISSING FROM CURRENT STRUCTURE:
+These three libraries are NOT present in the current SDK structure.
+They may be:
+- Still in the original cmall/common folders (migration incomplete)
+- Split across multiple existing libraries
+- Pending migration
+
+ACTION REQUIRED: Locate and migrate these vehicle-specific libraries.
+────────────────────────────────────────────────────────────────────────────
+
+
+################################################################################
+###  BSP LAYER - BOARD SUPPORT PACKAGE (37 LIBRARIES)
+################################################################################
+
+
+--------------------------------------------------------------------------------
+BSP/bootloader/ - BOOTLOADER AND MEMORY LAYOUT
+--------------------------------------------------------------------------------
+
+┌─ BSP/bootloader/ ──────────────────────────────────────────────────────────┐
+│  Bootloader and memory scatter/linker configuration                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.app.scatter.1766     ( 5 files ) - LPC1766 memory scatter/linker     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+BSP/mcu/ - MCU-SPECIFIC IMPLEMENTATIONS
+--------------------------------------------------------------------------------
+
+┌─ BSP/mcu/device/ ──────────────────────────────────────────────────────────┐
+│  Device identification and hardware version detection                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.device               ( 1 file  ) - Generic device interface           │
+│  lib.hw_ver_code          ( 1 file  ) - Hardware version code reader       │
+│  lib.system.type          ( 4 files ) - System type identification         │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/mcu/lpc1700/ ─────────────────────────────────────────────────────────┐
+│  NXP LPC1700-specific implementations                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.dei_led_1700         ( 7 files ) - DEI LED driver for LPC1700         │
+│  lib.dei_out_1700         (40 files ) - DEI output driver for LPC1700      │
+│  lib.device.lpc1700       ( 2 files ) - LPC1700 device driver              │
+│  lib.fob_ctrl_1700        (17 files ) - Key fob control for LPC1700        │
+│  lib.nvfs_1700            ( 7 files ) - NVFS implementation for LPC1700    │
+│  lib.os_1700              (27 files ) - OS implementation for LPC1700      │
+│  lib.os_1700.machine      ( 2 files ) - OS machine-specific (LPC1700)     │
+│  lib.prog_1700            ( 2 files ) - Programming mode (LPC1700)         │
+│  lib.sys_1700             (14 files ) - System functions for LPC1700       │
+│  lib.wake_1700            (17 files ) - Wake/low-power for LPC1700         │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+BSP/peripherals/ - PERIPHERAL DRIVERS
+--------------------------------------------------------------------------------
+
+┌─ BSP/peripherals/analog/ ──────────────────────────────────────────────────┐
+│  Analog peripherals (ADC, DAC)                                             │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.lib.hw.dac           ( 4 files ) - DAC hardware abstraction           │
+│  lib.adc                  (10 files ) - ADC driver                         │
+│  lib.dac                  (10 files ) - DAC driver                         │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/can/ ─────────────────────────────────────────────────────┐
+│  CAN bus controller driver                                                 │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.lib.can          (39 files ) - Low-level CAN driver              │
+│  com.ext.lib.can.lut.sw   (14 files ) - CAN lookup table (software)       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/gpio/ ────────────────────────────────────────────────────┐
+│  GPIO (General Purpose I/O) drivers                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.800_gpio_1700        ( 4 files ) - GPIO driver for 800-series board   │
+│  lib.gpio_pl              ( 2 files ) - GPIO platform layer                │
+│  lib.gpio_wake            ( 6 files ) - GPIO wake-up source handling       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/interrupts/ ──────────────────────────────────────────────┐
+│  Interrupt handling (FIQ, IRQ, VIC)                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.fiq                  (10 files ) - Fast Interrupt (FIQ) handler       │
+│  lib.irq.usr_1700         ( 9 files ) - User IRQ handlers (LPC1700)        │
+│  lib.isr_1700             ( 9 files ) - Interrupt Service Routines         │
+│  lib.vic                  ( 2 files ) - Vectored Interrupt Controller      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/serial/ ──────────────────────────────────────────────────┐
+│  Serial communication (UART, SIO, HOBP bus)                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.hobp_bus         (20 files ) - HOBP ISO K-Line bus driver         │
+│  lib.sio                  (18 files ) - Serial I/O driver                  │
+│  lib.sio_uart             (26 files ) - UART-based SIO implementation      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/timers/ ──────────────────────────────────────────────────┐
+│  Timer and real-time clock peripherals                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.rtc                  (10 files ) - Real-Time Clock driver             │
+│  lib.tmr                  (12 files ) - Timer driver                       │
+│  lib.tmr.fiq              (11 files ) - Timer FIQ service                  │
+│  lib.tmr.irq              (12 files ) - Timer IRQ service                  │
+│  lib.vrtc                 (13 files ) - Virtual RTC                        │
+│  lib.vrtc.f               ( 8 files ) - Fast virtual RTC                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ BSP/peripherals/watchdog/ ────────────────────────────────────────────────┐
+│  Watchdog timer driver                                                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.wdog                 ( 8 files ) - Watchdog driver                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  HAL LAYER - HARDWARE ABSTRACTION LAYER (24 LIBRARIES)
+################################################################################
+
+
+--------------------------------------------------------------------------------
+HAL/communication/ - COMMUNICATION PROTOCOLS
+--------------------------------------------------------------------------------
+
+┌─ HAL/communication/can/ ───────────────────────────────────────────────────┐
+│  CAN protocol stack and vehicle integration                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.lib.can.v        (34 files ) - CAN vehicle protocol layer         │
+│  com.ext.lib.can.v.usr    (19 files ) - CAN user-level vehicle functions   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ HAL/communication/d2d/ ───────────────────────────────────────────────────┐
+│  Device-to-Device (D2D) communication protocol                             │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.d2d.code             ( 4 files ) - D2D code generators/scripts        │
+│  lib.d2d1_port            (11 files ) - D2D port 1 driver                  │
+│  lib.d2d2_port            ( 9 files ) - D2D port 2 driver                  │
+│  lib.d2d_switch           ( 9 files ) - D2D port switching                 │
+│  lib.d2d_valet            (10 files ) - D2D valet mode                     │
+│  lib.intl_port            ( 6 files ) - Internal D2D port driver           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ HAL/communication/hobp/ ──────────────────────────────────────────────────┐
+│  Honda OBD Protocol (HOBP) - Type 6 immobilizer bypass                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  com.ext.hobp_type6       (21 files ) - HOBP Type 6 protocol layer         │
+│    Provides Honda vehicle immobilizer bypass functionality via ISO K-Line  │
+│    communication. Implements challenge-response authentication, ISK        │
+│    (Immobilizer Secret Key) storage, and programming mode support.         │
+│    Uses com.ext.hobp_bus (BSP layer) for low-level bus communication.     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ HAL/communication/rf/ ────────────────────────────────────────────────────┐
+│  RF (Radio Frequency) communication                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.keeloq               ( 6 files ) - Keeloq rolling code algorithm      │
+│  lib.rf                   (11 files ) - RF transceiver driver              │
+│  lib.rftd                 ( 5 files ) - RF transceiver driver (variant 1)  │
+│  lib.rftd2                (11 files ) - RF transceiver driver (variant 2)  │
+│  lib.rf_loop              ( 6 files ) - RF receive loop/polling            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/io/ - INPUT/OUTPUT ABSTRACTION
+--------------------------------------------------------------------------------
+
+┌─ HAL/io/ ──────────────────────────────────────────────────────────────────┐
+│  Input/output device abstraction                                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.idb                  ( 7 files ) - Input debounce                     │
+│  lib.ied                  ( 7 files ) - Input edge detection               │
+│  lib.led_usr              ( 3 files ) - User LED control                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/os/ - OPERATING SYSTEM SERVICES
+--------------------------------------------------------------------------------
+
+┌─ HAL/os/scheduler/ ────────────────────────────────────────────────────────┐
+│  Task scheduler and system management                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.per_exec             ( 9 files ) - Periodic execution scheduler       │
+│  lib.reset                (10 files ) - System reset handler               │
+│  lib.run_safe             (14 files ) - Safe execution wrapper             │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/power/ - POWER MANAGEMENT
+--------------------------------------------------------------------------------
+
+┌─ HAL/power/wake/ ──────────────────────────────────────────────────────────┐
+│  Wake-up and low-power mode management                                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.wdog_v               (14 files ) - Watchdog virtual layer             │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/security/ - SECURITY SERVICES
+--------------------------------------------------------------------------------
+
+┌─ HAL/security/ ────────────────────────────────────────────────────────────┐
+│  Encryption, authentication, and security services                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.aes128               ( 2 files ) - AES-128 encryption                 │
+│  lib.aid_dhp              ( 9 files ) - AID/DHP authentication protocol    │
+│  lib.secure.lock          ( 9 files ) - Secure lock mechanism              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+--------------------------------------------------------------------------------
+HAL/storage/ - STORAGE ABSTRACTION
+--------------------------------------------------------------------------------
+
+┌─ HAL/storage/nvfs/ ────────────────────────────────────────────────────────┐
+│  Non-Volatile File System (user-level interface)                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.nvfs.usr             ( 3 files ) - NVFS user interface                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  ENTRY LAYER - APPLICATION ENTRY POINTS (2 LIBRARIES)
+################################################################################
+
+┌─ ENTRY/ ───────────────────────────────────────────────────────────────────┐
+│  Application entry points and main functions                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  lib.main_1700            ( 3 files ) - Main application entry (LPC1700)   │
+│  lib.ngmm_task_main       ( 1 file  ) - NGMM task main initialization      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  INC LAYER - CONFIGURATION AND INCLUDE FILES (9 COLLECTIONS)
+################################################################################
+
+┌─ INC/cmall/core/ ──────────────────────────────────────────────────────────┐
+│  Core configuration headers for CMall project                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│  inc.config.d2d           ( 4 files ) - D2D configuration headers          │
+│  inc.config_1700          ( 4 files ) - LPC1700 configuration headers      │
+│  inc.core_version         ( 4 files ) - Core version headers               │
+│  inc.dummy                ( 4 files ) - Dummy/stub headers                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ INC/cmall/inc.config_fw/ ─────────────────────────────────────────────────┐
+│  Firmware configuration headers (CMall-specific)                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│  inc.config_fw            ( 7 files ) - Firmware config headers:           │
+│    - config_933.h / config_933_gpio.h    (project 933 specific)            │
+│    - config_800_gpio.h                    (800-series GPIO)                │
+│    - config_cm800.h                       (CM800 module)                   │
+│    - config_as_feature.h                  (Auto-Start feature)             │
+│    - config_dei_feature.h                 (DEI features)                   │
+│    - config_ngmm_feature.h                (NGMM features)                  │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ INC/common/core/ ─────────────────────────────────────────────────────────┐
+│  Common core version headers                                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│  inc.comm_core_version    ( 1 file  ) - Common core version header         │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+################################################################################
+###  UNUSED LAYER - DEPRECATED/LEGACY LIBRARIES (42 LIBRARIES)
+################################################################################
+
+The UNUSED layer contains libraries that have been replaced or deprecated but
+retained for reference during the migration. These should NOT be used in new
+code or builds.
+
+┌─ UNUSED/APP/ ──────────────────────────────────────────────────────────────┐
+│  Deprecated application-layer libraries                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│  features/dei:                                                             │
+│    lib.dei.ask, lib.dei.temp.irq, lib.dei_feature, lib.dei_led,           │
+│    lib.dei_out, lib.dei_prk, lib.dei_sc, lib.dei_siren, lib.dei_system    │
+│  features/falcon/core: lib.flc.led.usr, lib.flc.obd_can (template)        │
+│  features/ngmm: lib.ngmm_feature (template)                                │
+│  framework: lib.sys                                                        │
+│  services/control: lib.pts_ctl (template)                                 │
+│  services/trace: lib.trace                                                │
+│  utilities: lib.eips (docs only)                                           │
+│  vehicle/diagnostics: com.ext.lib.obd_can (template)                      │
+│  vehicle/programming: lib.prog, lib.prog_hy_canada                         │
+│  vehicle/security: lib.fob_ctrl                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ UNUSED/BSP/ ──────────────────────────────────────────────────────────────┐
+│  Deprecated BSP libraries                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│  peripherals/flash: lib.iap, lib.iap_1700 (In-Application Programming)    │
+│  peripherals/gpio: lib.800_gpio_1700 (template)                            │
+│  peripherals/interrupts: lib.irq.usr, lib.isr                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ UNUSED/HAL/ ──────────────────────────────────────────────────────────────┐
+│  Deprecated HAL libraries                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│  communication/d2d: lib.d2d, lib.d2d.code (stripped), lib.d2d3p_port      │
+│  communication/rf: lib.dei.rf.irq, lib.dei.rf1.irq, lib.rf_v2             │
+│  os/scheduler: lib.os, lib.os.machine                                      │
+│  power/wake: lib.wake                                                      │
+│  storage/nvfs: lib.nvfs (replaced by lib.nvfs.usr)                         │
+│  storage/nvram: lib.nvram, lib.nvram.usr (NVRAM deprecated)                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ UNUSED/INC/ ──────────────────────────────────────────────────────────────┐
+│  Deprecated configuration headers                                          │
+├────────────────────────────────────────────────────────────────────────────┤
+│  cmall/core/inc.config_1700: Old template configuration headers           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+LAYER DEPENDENCY RELATIONSHIPS
+================================================================================
+
+The architecture enforces clear dependency rules:
+
+    APP Layer
+      │
+      ├─ Depends on: HAL, BSP (through HAL)
+      └─ Never depends on: ENTRY, INC (includes headers only)
+      
+    HAL Layer
+      │
+      ├─ Depends on: BSP
+      └─ Never depends on: APP, ENTRY
+      
+    BSP Layer
+      │
+      ├─ Depends on: (nothing - lowest layer)
+      └─ Never depends on: HAL, APP, ENTRY
+      
+    ENTRY Layer
+      │
+      ├─ Depends on: APP, HAL, BSP (orchestrates everything)
+      └─ Never provides: reusable APIs (only entry points)
+      
+    INC Layer
+      │
+      ├─ Provides: Configuration headers (compile-time constants)
+      ├─ Included by: All layers
+      └─ Never contains: Executable code
+
+
+================================================================================
+HONDA OBD PROTOCOL (HOBP) INTEGRATION
+================================================================================
+
+The HOBP libraries provide Honda vehicle immobilizer bypass functionality:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      HOBP ARCHITECTURAL STACK                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  HAL/communication/hobp/com.ext.hobp_type6/                                 │
+│  ├── hobp.h                      - Public API                               │
+│  ├── hobp_init.c                 - Initialization and NVFS setup            │
+│  ├── hobp_is_prog.c              - Programming mode detection               │
+│  ├── hobp_rx/tx.c                - Protocol message handling                │
+│  ├── hobp_csum.c                 - Checksum calculation                     │
+│  └── hobp_gwr.c                  - GWR (Gateway) functions                  │
+│                                                                             │
+│  Depends on:                                                                │
+│  ├── BSP/peripherals/serial/com.ext.hobp_bus/ (low-level bus driver)       │
+│  ├── HAL/storage/nvfs/ (ISK and challenge/response storage)                │
+│  └── APP/services/queues/ (message queuing)                                 │
+│                                                                             │
+│  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ │
+│                                                                             │
+│  BSP/peripherals/serial/com.ext.hobp_bus/                                   │
+│  ├── hobp_bus.h                  - Bus driver API                           │
+│  ├── hobp_bus_init.c             - Bus initialization                       │
+│  ├── hobp_bus_rx/tx.c            - ISO K-Line Rx/Tx (10400 baud)           │
+│  ├── hobp_bus_fiq_service.c      - FIQ interrupt handler (timing critical) │
+│  └── hobp_bus_set_baudrate.c     - Baudrate configuration                   │
+│                                                                             │
+│  Depends on:                                                                │
+│  ├── BSP/peripherals/gpio/ (ISO1/ISO2 line control)                         │
+│  ├── BSP/peripherals/interrupts/ (FIQ/IRQ handlers)                         │
+│  └── BSP/peripherals/timers/ (bit timing)                                   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Key Features:
+- ISO K-Line communication at 10400 baud (Honda-specific timing)
+- Type 6 challenge-response authentication protocol
+- ISK (Immobilizer Secret Key) storage in NVFS
+- Programming mode and Pass-Thru Support (PTS)
+- Configurable for ISO1 or ISO2 physical lines via config_hobp_bus.h
+
+Usage:
+- Initialize with hobp_init() and hobp_bus_init()
+- Check programming mode: hobp_is_prog()
+- Transmit: hobp_bus_tx()
+- Register receive queue: hobp_bus_reg()
+- Configuration: INC/common/config_hobp.h and config_hobp_bus.h
+
+
+================================================================================
+KEY ARCHITECTURAL PATTERNS
+================================================================================
+
+1. **Library Naming Convention:**
+   - Core libraries: `lib.<name>`
+   - Common/shared: `com.lib.<name>` or `com.ext.lib.<name>`
+   - Hardware-specific: `lib.<name>_<mcu>` (e.g., `lib.main_1700`)
+   - Configuration: `inc.<category>` or `config_<feature>.h`
+
+2. **File Organization:**
+   - Each library is a self-contained folder
+   - Headers typically named `<library>.h`
+   - Implementation split into multiple `.c` files
+   - Private headers: `<library>_private.h`
+
+3. **Hardware Abstraction:**
+   - BSP provides raw peripheral access
+   - HAL wraps BSP in portable APIs
+   - APP uses HAL APIs only (no direct BSP access)
+
+4. **Configuration Management:**
+   - Project-specific: `INC/cmall/inc.config_fw/`
+   - Hardware-specific: `INC/cmall/core/inc.config_1700/`
+
+5. **Service-Oriented Design:**
+   - Services provide reusable functionality (queues, events, timing)
+   - Features implement product-specific behavior (DEI, Falcon, NGMM)
+   - Utilities provide low-level helpers (CRC, bitfield)
+
+6. **Communication Stack Pattern:**
+   - Bus drivers in BSP (CAN, SIO, HOBP bus)
+   - Protocol layers in HAL (CAN.v, D2D, HOBP, RF)
+   - Application integration in APP (vehicle-specific usage)
+
+
+================================================================================
+LARGEST LIBRARIES (BY FILE COUNT)
+================================================================================
+
+1.  lib.dei_scpp                91 files  (APP/features/dei)
+2.  lib.dei_sc (UNUSED)         86 files  (UNUSED/APP)
+3.  lib.dei_rs                  53 files  (APP/features/dei)
+4.  lib.nvfs (UNUSED)           46 files  (UNUSED/HAL)
+5.  lib.prg_out                 43 files  (APP/vehicle/programming)
+6.  lib.dei_out_1700            40 files  (BSP/mcu/lpc1700)
+7.  com.ext.lib.can             39 files  (BSP/peripherals/can)
+8.  lib.flc.obd_can             38 files  (APP/features/falcon/core)
+9.  com.ext.lib.obd_can         38 files  (APP/vehicle/diagnostics)
+10. lib.vin                     37 files  (APP/vehicle/diagnostics)
+
+
+================================================================================
+MIGRATION STATUS
+================================================================================
+
+✅ COMPLETED:
+- Three-layer architecture (BSP/HAL/APP) established
+- Libraries organized by layer and functional category
+- 195 libraries successfully migrated and categorized
+- UNUSED layer created for deprecated libraries
+- HOBP libraries integrated into BSP and HAL layers
+
+⚠️  INCOMPLETE / PENDING:
+- **Vehicle-specific customization libraries NOT migrated:**
+  - com.lib.detect/   (vehicle detection)
+  - com.lib.func/     (vehicle control functions)
+  - com.lib.sense/    (vehicle sensor reading)
+  
+  These are CRITICAL for vehicle-model customization and must be located
+  and migrated to APP/vehicle/ layer.
+
+- CMakeLists.txt files for each library (manual or scripted creation needed)
+- Dependency mapping between libraries (for build order)
+- Integration testing of migrated structure
+- Documentation of inter-library APIs
+
+
+================================================================================
+BUILDING THE PROJECT
+================================================================================
+
+Current Build System: Keil uVision 4 (legacy)
+Migration Target: CMake
+
+Original Build:
+  - Project file: cmall/project_933.uvproj
+  - Build scripts: build_me.bat, build_simple.bat
+  - Pre-build: scripts/pre-build.pl, scripts/config_gpio.pl
+
+Proposed CMake Structure:
+  - Root CMakeLists.txt at: .cmake_migration/code/CMakeLists.txt
+  - Per-library CMakeLists.txt in each lib.* folder
+  - Toolchain file for ARM GCC cross-compilation
+  - Build directory: .cmake_migration/code/build/
+
+
+================================================================================
+NEXT STEPS FOR MIGRATION
+================================================================================
+
+1. **Locate missing vehicle libraries:**
+   - Search cmall/ and common/ for detect/func/sense libraries
+   - Migrate to APP/vehicle/ with appropriate categorization
+
+2. **Generate CMakeLists.txt files:**
+   - Create a Python script to auto-generate per-library CMakeLists.txt
+   - Define library dependencies (link relationships)
+   - Set include paths and compiler flags
+
+3. **Validate HOBP integration:**
+   - Verify dependency chain: hobp_type6 → hobp_bus → GPIO/FIQ/timers
+   - Test configuration headers (config_hobp.h, config_hobp_bus.h)
+   - Document HOBP initialization sequence
+
+4. **Define toolchain:**
+   - Create ARM GCC toolchain file
+   - Set compiler flags matching Keil configuration
+   - Configure linker script (scatter file replacement)
+
+5. **Validate build:**
+   - Build each library independently
+   - Link final executable
+   - Compare binary output with Keil-built binary
+
+6. **Documentation:**
+   - Document library APIs
+   - Create dependency graph
+   - Write build instructions
+
+
+================================================================================
+REFERENCES
+================================================================================
+
+- Original project: cmall/project_933.uvproj
+- Proposed architecture: proposed_architecture.txt (dated March 4, 2026)
+- Migration workspace: .cmake_migration/
+- SDK source: .cmake_migration/code/src/SDK/
+- Previous architecture: current_architecture.txt (March 17, 2026)
+
+
+================================================================================
+END OF DOCUMENT
+================================================================================
+Generated: March 18, 2026
+Project: FRD15EU_DS4_vscode
+Updated with HOBP library integration
