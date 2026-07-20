@@ -377,10 +377,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>29</ColumnNumber>
+      <ColumnNumber>65</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>20</TopLine>
-      <CurrentLine>30</CurrentLine>
+      <CurrentLine>34</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\VEHICLE_SPECIFIC\lib.fw.ds4\lib.fw\fw_init.c</PathWithFileName>
       <FilenameWithoutPath>fw_init.c</FilenameWithoutPath>
@@ -1999,12 +1999,26 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
+      <PathWithFileName>VEHICLE_SPECIFIC\com.lib.detect\detect_init.c</PathWithFileName>
+      <FilenameWithoutPath>detect_init.c</FilenameWithoutPath>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>128</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
       <PathWithFileName>VEHICLE_SPECIFIC\com.lib.detect\detect_init_nvfs.c</PathWithFileName>
       <FilenameWithoutPath>detect_init_nvfs.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>128</FileNumber>
+      <FileNumber>129</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2018,7 +2032,7 @@
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>129</FileNumber>
+      <FileNumber>130</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2032,7 +2046,7 @@
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>130</FileNumber>
+      <FileNumber>131</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2046,7 +2060,7 @@
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>131</FileNumber>
+      <FileNumber>132</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2061,13 +2075,34 @@
   </Group>
 
   <Group>
-    <GroupName>com.lib.func</GroupName>
-    <tvExp>1</tvExp>
+    <GroupName>com.Core_Contract_SDK_DS4</GroupName>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>12</GroupNumber>
-      <FileNumber>132</FileNumber>
+      <FileNumber>133</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>external\Core_Contract_SDK_DS4\core_contract_ds4_gpio_iface_shim.c</PathWithFileName>
+      <FilenameWithoutPath>core_contract_ds4_gpio_iface_shim.c</FilenameWithoutPath>
+    </File>
+  </Group>
+
+  <Group>
+    <GroupName>com.lib.func</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <File>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>134</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2080,8 +2115,8 @@
       <FilenameWithoutPath>func.h</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>133</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>135</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2094,8 +2129,8 @@
       <FilenameWithoutPath>func_arm.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>134</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>136</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2108,8 +2143,8 @@
       <FilenameWithoutPath>func_cfg.h</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>135</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>137</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2122,8 +2157,8 @@
       <FilenameWithoutPath>func_cmd.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>136</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>138</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2136,8 +2171,8 @@
       <FilenameWithoutPath>func_cmd_init.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>137</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>139</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2150,8 +2185,8 @@
       <FilenameWithoutPath>func_disarm.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>138</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>140</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2164,8 +2199,8 @@
       <FilenameWithoutPath>func_domelight.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>139</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>141</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2178,8 +2213,8 @@
       <FilenameWithoutPath>func_hazard_ctrl.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>140</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>142</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2192,8 +2227,8 @@
       <FilenameWithoutPath>func_init.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>141</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>143</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2206,8 +2241,8 @@
       <FilenameWithoutPath>func_light.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>142</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>144</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2220,8 +2255,8 @@
       <FilenameWithoutPath>func_lock.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>143</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>145</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2234,8 +2269,8 @@
       <FilenameWithoutPath>func_oem.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>144</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>146</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2248,8 +2283,8 @@
       <FilenameWithoutPath>func_prc_init.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>145</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>147</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2262,8 +2297,8 @@
       <FilenameWithoutPath>func_private.h</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>146</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>148</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2276,8 +2311,8 @@
       <FilenameWithoutPath>func_rs.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>147</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>149</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2290,8 +2325,8 @@
       <FilenameWithoutPath>func_rs_pts_callback.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>148</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>150</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2304,8 +2339,8 @@
       <FilenameWithoutPath>func_trunk_release.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>149</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>151</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2318,8 +2353,8 @@
       <FilenameWithoutPath>func_unlock_all.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>150</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>152</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2332,8 +2367,8 @@
       <FilenameWithoutPath>func_vars.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>151</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>153</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2346,8 +2381,8 @@
       <FilenameWithoutPath>func_can_wake.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>152</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>154</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2360,8 +2395,8 @@
       <FilenameWithoutPath>func_front_wrd.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>153</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>155</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2374,8 +2409,8 @@
       <FilenameWithoutPath>func_gas_cap.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>154</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>156</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2388,8 +2423,8 @@
       <FilenameWithoutPath>func_rear_wrd.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>155</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>157</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2402,8 +2437,8 @@
       <FilenameWithoutPath>func_tester_lock_unlock.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>12</GroupNumber>
-      <FileNumber>156</FileNumber>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>158</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2419,12 +2454,12 @@
 
   <Group>
     <GroupName>com.lib.sense</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>157</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>159</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2437,8 +2472,8 @@
       <FilenameWithoutPath>sense.h</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>158</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>160</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2451,8 +2486,8 @@
       <FilenameWithoutPath>sense_brake.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>159</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>161</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2465,8 +2500,8 @@
       <FilenameWithoutPath>sense_doors.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>160</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>162</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2479,8 +2514,8 @@
       <FilenameWithoutPath>sense_handbrake.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>161</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>163</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2493,8 +2528,8 @@
       <FilenameWithoutPath>sense_hazard.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>162</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>164</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2507,8 +2542,8 @@
       <FilenameWithoutPath>sense_hood.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>163</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>165</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2521,8 +2556,8 @@
       <FilenameWithoutPath>sense_ignition.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>164</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>166</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2535,8 +2570,8 @@
       <FilenameWithoutPath>sense_init.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>165</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>167</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2549,8 +2584,8 @@
       <FilenameWithoutPath>sense_private.h</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>166</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>168</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2563,8 +2598,8 @@
       <FilenameWithoutPath>sense_rke.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>167</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>169</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2577,8 +2612,8 @@
       <FilenameWithoutPath>sense_rpm.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>168</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>170</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2591,8 +2626,8 @@
       <FilenameWithoutPath>sense_skd.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>169</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>171</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2605,8 +2640,8 @@
       <FilenameWithoutPath>sense_speed.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>170</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>172</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2619,8 +2654,8 @@
       <FilenameWithoutPath>sense_trunk.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>171</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>173</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2633,8 +2668,8 @@
       <FilenameWithoutPath>sense_vars.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>172</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>174</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2647,8 +2682,8 @@
       <FilenameWithoutPath>sense_windows_pos.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>173</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>175</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2661,8 +2696,8 @@
       <FilenameWithoutPath>sense_index_331.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>174</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>176</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2675,8 +2710,8 @@
       <FilenameWithoutPath>sense_index_332.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>175</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>177</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2689,8 +2724,8 @@
       <FilenameWithoutPath>sense_index_446.c</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>176</FileNumber>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>178</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2710,8 +2745,8 @@
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
-      <GroupNumber>14</GroupNumber>
-      <FileNumber>177</FileNumber>
+      <GroupNumber>15</GroupNumber>
+      <FileNumber>179</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2724,8 +2759,8 @@
       <FilenameWithoutPath>vic.h</FilenameWithoutPath>
     </File>
     <File>
-      <GroupNumber>14</GroupNumber>
-      <FileNumber>178</FileNumber>
+      <GroupNumber>15</GroupNumber>
+      <FileNumber>180</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -2740,7 +2775,7 @@
   </Group>
 
   <AlienFiles>
-    <PathWithFilename>D:\ADI\DB3\Based_on_latest_core\FRD37EU_NEW\can.fw.frd37eu\external\can.sdk.ds4\HAL\communication\d2d\lib.intl_port\intl_port_vars.c</PathWithFilename>
+    <PathWithFilename>D:\ADI\DB3\Based_on_latest_core\DS4_CORE_SPLIT\core_ds4\external\can.sdk.ds4\HAL\communication\d2d\lib.intl_port\intl_port_vars.c</PathWithFilename>
     <TopLine>1</TopLine>
     <CurrentLine>13</CurrentLine>
     <Constant>0</Constant>
@@ -2766,7 +2801,7 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>D:\ADI\DB3\Based_on_latest_core\FRD37EU_NEW\can.fw.frd37eu\external\can.sdk.ds4\HAL\communication\d2d\lib.intl_port\intl_port_handler.c</PathWithFilename>
+    <PathWithFilename>D:\ADI\DB3\Based_on_latest_core\DS4_CORE_SPLIT\core_ds4\external\can.sdk.ds4\HAL\communication\d2d\lib.intl_port\intl_port_handler.c</PathWithFilename>
     <TopLine>78</TopLine>
     <CurrentLine>78</CurrentLine>
     <Constant>0</Constant>
@@ -2792,7 +2827,7 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>D:\ADI\DB3\Based_on_latest_core\FRD37EU_NEW\can.fw.frd37eu\external\can.sdk.ds4\BSP\mcu\device\lib.device\device.h</PathWithFilename>
+    <PathWithFilename>D:\ADI\DB3\Based_on_latest_core\DS4_CORE_SPLIT\core_ds4\external\can.sdk.ds4\BSP\mcu\device\lib.device\device.h</PathWithFilename>
     <TopLine>75</TopLine>
     <CurrentLine>75</CurrentLine>
     <Constant>0</Constant>
@@ -2818,7 +2853,7 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>D:\ADI\DB3\Based_on_latest_core\FRD37EU_NEW\can.fw.frd37eu\external\can.sdk.ds4\INC\cmall\core\inc.config_1700\config.h</PathWithFilename>
+    <PathWithFilename>D:\ADI\DB3\Based_on_latest_core\DS4_CORE_SPLIT\core_ds4\external\can.sdk.ds4\INC\cmall\core\inc.config_1700\config.h</PathWithFilename>
     <TopLine>102</TopLine>
     <CurrentLine>102</CurrentLine>
     <Constant>0</Constant>
@@ -4184,8 +4219,26 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>10</ActiveTab>
+      <ActiveTab>1</ActiveTab>
       <Documents>
+        <Doc>
+          <Name>.\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_dei_feature.h</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>902</TopLine>
+          <CurrentLine>909</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_ngmm_feature.h</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_gpio.h</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>31</TopLine>
+          <CurrentLine>31</CurrentLine>
+        </Doc>
         <Doc>
           <Name>.\VEHICLE_SPECIFIC\lib.config.ds4\com.inc.config.fw\config_can.h</Name>
           <ColumnNumber>0</ColumnNumber>
@@ -4248,9 +4301,9 @@
         </Doc>
         <Doc>
           <Name>.\VEHICLE_SPECIFIC\lib.fw.ds4\lib.fw\fw_init.c</Name>
-          <ColumnNumber>29</ColumnNumber>
+          <ColumnNumber>65</ColumnNumber>
           <TopLine>20</TopLine>
-          <CurrentLine>30</CurrentLine>
+          <CurrentLine>34</CurrentLine>
         </Doc>
         <Doc>
           <Name>VEHICLE_SPECIFIC\com.lib.func\func_init.c</Name>

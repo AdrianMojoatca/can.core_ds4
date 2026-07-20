@@ -10,7 +10,7 @@
 /*                             I N C L U D E S                              */
 /*==========================================================================*/
 #include "sense_private.h"
-#include "core_contract_db3_pts_ctl_config.h"
+#include "config_pts_ctl.h"
 /*==========================================================================*/
 /*      D E F I N E S  -  E N U M E R A T I O N S  -  T Y P E D E F S       */
 /*==========================================================================*/
@@ -38,13 +38,13 @@ void sense_doors_3B3( Can_Msg *can_msg )
     static UInt32 last_pts_timeout = 0xFFFFFFFFUL;
     static UInt32 last_pts_pulse_timeout = 0xFFFFFFFFUL;
 
-    UInt32 pts_timeout = (UInt32)get_pts_ctl_timeout();
-    UInt32 pts_pulse_timeout = (UInt32)get_pts_ctl_pulse_timeout();
+    UInt32 pts_timeout = (UInt32)PTS_CTL_TIMEOUT;
+    UInt32 pts_pulse_timeout = (UInt32)PTS_CTL_PULSE_TIMEOUT;
 
     if ((pts_timeout != last_pts_timeout) || (pts_pulse_timeout != last_pts_pulse_timeout))
     {
         TRACE("\r\n[DOORS][PTS] ver=%lu timeout=%lu pulse=%lu",
-              (unsigned long)get_config_pts_ctl_version(),
+              (unsigned long)CONFIG_PTS_CTL_VERSION,
               (unsigned long)pts_timeout,
               (unsigned long)pts_pulse_timeout);
 

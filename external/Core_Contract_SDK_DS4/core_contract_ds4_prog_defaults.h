@@ -1,0 +1,108 @@
+#ifndef __CORE_CONTRACT_DS4_PROG_DEFAULTS_H__
+#define __CORE_CONTRACT_DS4_PROG_DEFAULTS_H__
+
+#define __CONFIG_PROG_H__
+#define CORE_CONFIG_PROG_VERSION_1_02
+
+#define OPTION_TRUNK_ENABLE             0U
+#define OPTION_RIGHT_SLIDE_ENABLE       0U
+#define OPTION_LEFT_SLIDE_ENABLE        0U
+#define OPTION_TAIL_GLASS_ENABLE        0U
+#define OPTION_GAS_CAP_ENABLE           0U
+#define OPTION_HEAD_LIGHTS_ENABLE       0U
+#define OPTION_SUNROOF_CLOSURE_ENABLE   0U
+#define OPTION_WINDOWS_CLOSURE_ENABLE   0U
+#define OPTION_WINDOWS_VENT_ENABLE      0U
+#define OPTION_AUDIO_ENABLE             0U
+#define OPTION_TIMED_ENABLE             0U
+#define OPTION_LATCHED_ENABLE           0U
+#define OPTION_PULSED_ENABLE            0U
+#define OPTION_GARAGE_DOOR_ENABLE       0U
+
+#define HEATED_SEATS_LEVEL_HIGH_ENABLE  0U
+#define HEATED_SEATS_LEVEL_MED_ENABLE   0U
+#define HEATED_SEATS_LEVEL_LOW_ENABLE   0U
+
+#define FEAT_UNLOCK_DRIVER_ENABLE       0U
+#define FEAT_UNLOCK_DRIVER_VALUE        1U
+#define FEAT_RELOCK_ENABLE              0U
+#define FEAT_RELOCK_VALUE               1U
+#define FEAT_AUTO_LOCK_ENABLE           0U
+#define FEAT_AUTO_LOCK_VALUE            1U
+#define FEAT_AUTO_UNLOCK_ENABLE         0U
+#define FEAT_AUTO_UNLOCK_VALUE          1U
+#define FEAT_TRUNK_ENABLE               0U
+#define FEAT_TRUNK_DEFAULT              0U
+#define FEAT_AUX1_ENABLE                0U
+#define FEAT_AUX1_DEFAULT               8U
+#define FEAT_AUX2_ENABLE                0U
+#define FEAT_AUX2_DEFAULT               7U
+#define FEAT_AUX3_ENABLE                0U
+#define FEAT_AUX3_DEFAULT               4U
+#define FEAT_AUX4_ENABLE                0U
+#define FEAT_AUX4_DEFAULT               7U
+#define FEAT_RF_OUTPUT_ENABLE           1U
+#define FEAT_RF_OUTPUT_VALUE            1U
+#define FEAT_HORN_CONFIRMATION_ENABLE   0U
+#define FEAT_HORN_CONFIRMATION_VALUE    1U
+#define FEAT_COMFORT_CLOSURE_ENABLE     0U
+#define FEAT_COMFORT_CLOSURE_VALUE      1U
+#define FEAT_OEM_SECURITY_ENABLE        0U
+#define FEAT_OEM_SECURITY_VALUE         1U
+#define FEAT_KEY_IGN_ARM_DEFEAT_ENABLE  0U
+#define FEAT_KEY_IGN_ARM_DEFEAT_VALUE   2U
+#define FEAT_LIGHT_CONTROL_ENABLE       0U
+#define FEAT_LIGHT_CONTROL_VALUE        1U
+#define FEAT_EXT_LIGHT_SUPERVISION_ENABLE 0U
+#define FEAT_EXT_LIGHT_SUPERVI0ION_ENABLE FEAT_EXT_LIGHT_SUPERVISION_ENABLE
+#define FEAT_EXT_LIGHT_SUPERVISION_VALUE 1U
+#define FEAT_HEATED_SEATS_ENABLE        0U
+#define FEAT_HEATED_SEATS_VALUE         1U
+#define FEAT_DEFROSTER_ENABLE           0U
+#define FEAT_DEFROSTER_VALUE            1U
+#define FEAT_SEATS_TEMP_CONTROL_ENABLE  0U
+#define FEAT_SEATS_TEMP_CONTROL_VALUE   1U
+#define FEAT_SEATS_TEMP_LEVEL_ENABLE    0U
+#define FEAT_SEATS_TEMP_LEVEL_VALUE     1U
+#define FEAT_CTL_DOORLOCK_ENABLE        0U
+#define FEAT_CTL_DOORLOCK_VALUE         1U
+#define CTL_DOORLOCK_IGNITION_ENABLE    1U
+#define CTL_DOORLOCK_BRAKE_ENABLE       1U
+#define CTL_DOORLOCK_SPEED_ENABLE       1U
+#define FEAT_SECURE_LOCK_ENABLE         0U
+#define FEAT_SECURE_LOCK_VALUE          3U
+#define SECURE_LOCK_SMART_ENABLE        1U
+
+#define FEAT_CUSTOM1_ENABLE             0U
+#define FEAT_CUSTOM1_DEFAULT_VALUE      1U
+#define CUSTOM1_OPT1_ENABLE             1U
+#define CUSTOM1_OPT2_ENABLE             1U
+#define CUSTOM1_OPT3_ENABLE             1U
+#define CUSTOM1_OPT4_ENABLE             1U
+#define CUSTOM1_OPT5_ENABLE             0U
+
+#define FEAT_CUSTOM2_ENABLE             0U
+#define FEAT_CUSTOM2_DEFAULT_VALUE      1U
+#define CUSTOM2_OPT1_ENABLE             0U
+#define CUSTOM2_OPT2_ENABLE             0U
+#define CUSTOM2_OPT3_ENABLE             0U
+#define CUSTOM2_OPT4_ENABLE             0U
+#define CUSTOM2_OPT5_ENABLE             0U
+
+#define FEAT_CUSTOM3_ENABLE             0U
+#define FEAT_CUSTOM3_DEFAULT_VALUE      1U
+#define CUSTOM3_OPT1_ENABLE             0U
+#define CUSTOM3_OPT2_ENABLE             0U
+#define CUSTOM3_OPT3_ENABLE             0U
+#define CUSTOM3_OPT4_ENABLE             0U
+#define CUSTOM3_OPT5_ENABLE             0U
+
+#define FEAT_CUSTOM4_ENABLE             0U
+#define FEAT_CUSTOM4_DEFAULT_VALUE      1U
+#define CUSTOM4_OPT1_ENABLE             1U
+#define CUSTOM4_OPT2_ENABLE             1U
+#define CUSTOM4_OPT3_ENABLE             1U
+#define CUSTOM4_OPT4_ENABLE             1U
+#define CUSTOM4_OPT5_ENABLE             1U
+
+#endif
