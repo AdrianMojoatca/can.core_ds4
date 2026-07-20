@@ -44,7 +44,7 @@
 #endif
 
 static const core_ds4_abi_info_t* core_contract_ds4_shared_abi_info_get(void);
-extern Boolean trace_print(const char *str, ...);   /* SS4 Slice 3: routed to FW via table */
+extern Boolean dbg_print(const char *str, ...);   /* SS4 Slice 3: routed to FW via table. DS4 trace fn is dbg_print (DB3 used trace_print); TRACE()->dbg_print via dbgcli.h */
 
 const core_ds4_abi_info_t g_core_ds4_shared_abi_info CORE_DS4_SHARED_ABI_INFO_PLACEMENT =
 {
@@ -90,7 +90,7 @@ const core_ds4_api_table_t g_core_ds4_shared_api_table CORE_DS4_SHARED_API_TABLE
     &g_status_config,
 
     /* GROUP: diag (SS4 Slice 3) */
-    (core_ds4_fn_trace_t)trace_print,
+    (core_ds4_fn_trace_t)dbg_print,
 
     /* GROUP: os/rtos (SS4 Slice 4) */
     (core_ds4_fn_ptr_void)os_evt_create,
@@ -184,8 +184,10 @@ const core_ds4_api_table_t g_core_ds4_shared_api_table CORE_DS4_SHARED_API_TABLE
     (core_ds4_fn_u32_ptr)timeout_q_remove,
     &nvfs_fw_data,
 
-    /* GROUP: prog (SS4 Slice 8d) */
-    (core_ds4_fn_void_ptr)prog_set_exit_callback,
+    /* GROUP: prog: prog_set_exit_callback is a no-op macro on PLATFORM_933 (DS4) -
+       there is no real function to route, and the FW-side call also expands to `;`.
+       Slot left NULL on DS4. (DB3 routed a real prog_set_exit_callback here.) */
+    0,
 
     /* GROUP: dbg config (v1.1) - DATA pointer to CORE's single dbg config instance */
     &g_dbg_config,
