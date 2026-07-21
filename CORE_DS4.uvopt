@@ -21,7 +21,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>FRD37EU_DS4</TargetName>
+    <TargetName>CORE_DS4</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
@@ -4303,7 +4303,7 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>4</ActiveTab>
+      <ActiveTab>1</ActiveTab>
       <Documents>
         <Doc>
           <Name>.\VEHICLE_SPECIFIC\lib.config.ds4\inc.config_fw\config_dei_feature.h</Name>
