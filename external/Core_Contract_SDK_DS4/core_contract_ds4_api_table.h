@@ -69,6 +69,8 @@ typedef void     (*core_ds4_fn_void_ptr_u32)(void*, uint32_t);                  
 typedef uint32_t (*core_ds4_fn_timeout_q_ins_t)(void*, void*, uint32_t, uint32_t, uint32_t); /* timeout_q_insert */
 typedef uint32_t (*core_ds4_fn_u32_ptr)(void*);                                            /* timeout_q_remove */
 typedef void     (*core_ds4_fn_void_ptr_u32_u32)(void*, uint32_t, uint32_t);               /* cmd_lut_insert_table1 */
+typedef uint32_t (*core_ds4_fn_cmd_q_t)(uint32_t, uint32_t, ...);                           /* cmd_q_insert (variadic) */
+typedef uint32_t (*core_ds4_fn_can_per_add_t)(void*, void*, uint32_t, uint32_t, uint32_t);  /* can_per_add (5 args) */
 
 /*
  * CORE->FW API table.  ABI RULE: APPEND-ONLY. Never reorder or remove a field
@@ -219,6 +221,14 @@ typedef struct
            Appended at the TAIL (consumes a reserved slot) so all v1.0 field offsets are
            preserved -> an old (v1.0) FW on a v1.1 CORE still reads the table correctly. ---- */
     dbg_config_contract_t* dbg_config;
+
+    /* ---- GROUP: DS4-added routing (symbols the DS4 vehicle calls that DB3 did not route) ----
+       Populate in the shim's CORE_DS4_BUILD block (S5) with the real CORE functions;
+       until then these are 0 -> the FW must not call them at runtime. ---- */
+    core_ds4_fn_u32_u32          prog_retrieve_option_fn;   /* SInt8 prog_retrieve_option(Feature_Name)      */
+    core_ds4_fn_cmd_q_t          cmd_q_insert_fn;           /* Boolean cmd_q_insert(UInt16, TskTimeout, ...) */
+    core_ds4_fn_can_per_add_t    can_per_add_fn;            /* Boolean can_per_add(func, arg, off, per, cnt) */
+    core_ds4_fn_u32_ptr          can_per_remove_fn;         /* Boolean can_per_remove(void*)                 */
 
     /* ---- future groups appended here (append-only), consuming reserved headroom ---- */
 
