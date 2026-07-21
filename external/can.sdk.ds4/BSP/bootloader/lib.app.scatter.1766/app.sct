@@ -63,9 +63,17 @@ LR_IROM_APP1 0x00008100 0x0002EF00
 		* (ram_irq_vectors)
     }
 
-  RW_IRAM_1 0x10002100 (0x00004F00 - 0x2100) ; RAM : On-Chip
+  RW_IRAM_1 0x10002100 (0x00004900 - 0x2100) ; RAM : On-Chip  (= 0x2800, shrunk 0x600 to reserve FW RAM)
     {
 		.ANY (+RW +ZI)
+    }
+
+  ; DS4 thin-FW RW/ZI window (DS5). CORE must NOT place RW/ZI here; the thin FW's
+  ; scatter (app_fw_ds4_thin.sct) puts RW_FW at exactly 0x10004900 size 0x600 so
+  ; fw_ram_init can memcpy/memset it. Sized from measured vehicle RW+ZI (F=0x471)
+  ; + growth headroom. Keep base+size in sync with the FW scatter.
+  ER_FW_RAM_RESERVE      0x10004900 EMPTY  0x600      ; RW_FW window (CORE-reserved)
+    {
     }
 
   ER_OS_HEAP_0           0x10004F00 EMPTY  0x3000     ; On chip : Heap 0 sections
