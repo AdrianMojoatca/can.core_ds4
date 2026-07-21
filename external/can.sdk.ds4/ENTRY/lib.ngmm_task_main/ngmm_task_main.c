@@ -73,6 +73,20 @@
 #include "dei_siren.h"
 #include "dbg.h"
 
+#if defined(CORE_DS4_BUILD)
+/* Thin-FW single-boot handoff (DS5). CORE reads the FW descriptor at the FW flash
+   base; if valid it runs the FW's RAM + identity hooks before core_common1_init
+   (the first config consumer). DS4 has no core_init(): bring-up is the task_main()
+   sequence, so this sits at the top of task_main and the vehicle fw_init /
+   fw_init_reset (called deep in that sequence) route via the descriptor. */
+#include "core_contract_ds4_fw_descriptor.h"
+
+/* Set when a valid thin-FW descriptor is found at CORE_DS4_FLASH_FW_START_ADDR;
+   the weak fw_init/fw_init_reset dispatchers below route to it in the pure-CORE
+   (vehicle-less) build. Stays 0 in the monolith / when no FW is flashed. */
+static const core_ds4_fw_descriptor_t* g_fw_desc = 0;
+#endif
+
 /*==========================================================================*/
 /*      D E F I N E S  -  E N U M E R A T I O N S  -  T Y P E D E F S       */
 /*==========================================================================*/
@@ -339,6 +353,25 @@ void task_main (void * tsk_arg)
     timestamp_init();
 
     reboot_cause = RSIR;        // wdog_v_init clears Reboot cause register. Get it now
+
+#if defined(CORE_DS4_BUILD)
+    /* Thin-FW single-boot: run the FW's early hooks (RAM init, then identity/config)
+       before core_common1_init. No valid descriptor (e.g. FW not flashed at the FW
+       base) -> g_fw_desc stays 0 and CORE boots exactly as the monolith. This runs
+       pre-UART, so no TRACE here; an LED progress marker is added at DS5 S5 (pending
+       an early-GPIO usability check). fw_ram_init MUST precede fw_identity_init, and
+       fw_identity_init MUST precede core_common1_init (the first config consumer). */
+    {
+        const core_ds4_fw_descriptor_t* fw_desc =
+            (const core_ds4_fw_descriptor_t*)CORE_DS4_FLASH_FW_START_ADDR;
+        if (core_contract_ds4_fw_descriptor_is_valid(fw_desc))
+        {
+            g_fw_desc = fw_desc;
+            fw_desc->fw_ram_init_fn();       /* copy FW RW + zero FW ZI first */
+            fw_desc->fw_identity_init_fn();  /* populate CORE's single config */
+        }
+    }
+#endif
 
     core_common1_init ();//starting main components from common core: wake,nvfs,dbg,wdog_v,rtc
 
@@ -805,8 +838,25 @@ static System_Type ngmm_retrieved_sys_type(void)
 
 /*---WEAK-FUNC--------------------------------------------------------------*/
 
+/* Kept WEAK so the vehicle's strong fw_init/fw_init_reset (lib.fw.ds4) override
+   them in the monolith / CORE-with-vehicle build. In the thin-FW pure-CORE build
+   the vehicle code is gone, so these dispatchers route to the FW descriptor. */
 void __attribute__((weak))fw_init(void)
-{}
+{
+#if defined(CORE_DS4_BUILD)
+    if (g_fw_desc != 0)
+    {
+        g_fw_desc->fw_init_fn();
+    }
+#endif
+}
 
 void __attribute__((weak))fw_init_reset(void)
-{}
+{
+#if defined(CORE_DS4_BUILD)
+    if ((g_fw_desc != 0) && (g_fw_desc->fw_init_reset_fn != 0))
+    {
+        g_fw_desc->fw_init_reset_fn();
+    }
+#endif
+}

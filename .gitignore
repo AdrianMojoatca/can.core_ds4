@@ -1,5 +1,6 @@
-# build outputs
-build/
+# build outputs (but keep hand-written tooling under build/scripts/)
+build/*
+!build/scripts/
 *.o
 *.crf
 *.__i

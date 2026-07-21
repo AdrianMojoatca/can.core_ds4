@@ -7,13 +7,15 @@
  * In the thin-FW model CORE boots the RTOS once and STAYS LIVE; it then invokes
  * the FW image through this descriptor instead of BX-jumping into an FW re-boot.
  * The descriptor is published by the FW image at its flash base
- * (CORE_DS4_FLASH_FW_START_ADDR = 0x00028000) so CORE can find + validate it.
+ * (CORE_DS4_FLASH_FW_START_ADDR = 0x00038000) so CORE can find + validate it.
  *
- * CORE calls, in order:  fw_ram_init_fn  -> fw_identity_init_fn -> core_init()
- *                        -> [io test] -> fw_init_reset_fn -> fw_init_fn.
- * fw_identity_init MUST precede core_init (core_init consumes the config it writes).
+ * DS4 has no single core_init(); bring-up is the ngmm_task_main() sequence. CORE
+ * runs, near the top of task_main: fw_ram_init_fn -> fw_identity_init_fn (BEFORE the
+ * first config consumer core_common1_init), then fw_init_reset_fn / fw_init_fn fire
+ * at their existing points in that sequence via the weak dispatchers.
+ * fw_identity_init MUST precede the config consumers (they read the config it writes).
  *
- * A CORE that finds no valid descriptor at 0x28000 falls back to the legacy
+ * A CORE that finds no valid descriptor at 0x38000 falls back to the legacy
  * re-boot handoff (core_contract_ds4_fw_handoff.h) -> full backward compatibility.
  */
 

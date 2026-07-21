@@ -64,7 +64,7 @@
           <BeforeMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>c:\cygwin\bin\perl.exe D:\ADI\DB3\Based_on_latest_core\FRD37EU_NEW\can.fw.frd37eu\build\scripts\pre-build 933</UserProg1Name>
+            <UserProg1Name>c:\cygwin\bin\perl.exe D:\ADI\DB3\Based_on_latest_core\DS4_CORE_SPLIT\core_ds4\scripts\pre-build.pl 933</UserProg1Name>
             <UserProg2Name>c:\cygwin\bin\perl.exe ..\scripts\pre-build.pl 403</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -72,7 +72,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>D:\ADI\DB3\Based_on_latest_core\FRD37EU_NEW\can.fw.frd37eu\build\out\out.bat #H, NGMM</UserProg1Name>
+            <UserProg1Name>..\out\out.bat #H,NGMM</UserProg1Name>
             <UserProg2Name>..\out\out.bat #H,DBALL3</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
