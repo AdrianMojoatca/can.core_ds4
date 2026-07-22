@@ -5,12 +5,12 @@
 
 #define CORE_DS4_ABI_MAGIC                   (0x43445334UL)   /* 'CDS4' */
 #define CORE_DS4_ABI_VERSION_MAJOR           (1U)
-#define CORE_DS4_ABI_VERSION_MINOR           (0U)
-#define CORE_DS4_API_TABLE_VERSION           (1U)
+#define CORE_DS4_ABI_VERSION_MINOR           (1U)   /* S5: +4 DS4-only routed fields (additive) */
+#define CORE_DS4_API_TABLE_VERSION           (2U)
 
 /*
  * DS4 contract is GREENFIELD / NOT frozen yet. The API-table window is sized
- * generously up front (see image_layout: table 0x27040 .. FW base 0x28000 = 0xFC0),
+ * generously up front (see image_layout: table 0x37040 .. FW base 0x38000 = 0xFC0),
  * reserved_slots is large, and the surface is still evolving through the DS slices.
  * Freeze at DS6: pin the version constants, add freeze asserts + FROZEN.md.
  */

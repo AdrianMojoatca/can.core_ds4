@@ -192,6 +192,13 @@ const core_ds4_api_table_t g_core_ds4_shared_api_table CORE_DS4_SHARED_API_TABLE
     /* GROUP: dbg config (v1.1) - DATA pointer to CORE's single dbg config instance */
     &g_dbg_config,
 
+    /* GROUP: DS4-added routing (S5) - real CORE fns for the 4 DS4-only symbols the
+       vehicle calls (DB3 did not route these). Order matches the struct fields. */
+    (core_ds4_fn_u32_u32)prog_retrieve_option,
+    (core_ds4_fn_cmd_q_t)cmd_q_insert,
+    (core_ds4_fn_can_per_add_t)can_per_add,
+    (core_ds4_fn_u32_ptr)can_per_remove,
+
     {0}
 };
 
