@@ -71,8 +71,11 @@ void wdog_v_init ()
 #ifndef WDOG_V_ONLY_LOG
 	// When using JTAG breakpoints, disable the WDT; otherwise, MCU will reset during breakpoints
 	#if DBG_JTAG == 0
-		wdog_init( WDOG_CLK_MODE_PCLK , 0x2000000 );	// approx 8 seconds @ 72 MHz
-		wdog_enable();
+		/* DS5 BRING-UP: HW WDT temporarily DISABLED to diagnose the ~2s reset loop
+		   in the single-boot bench (WDTC 0x2000000 @72MHz PCLK = ~1.86s, NOT 8s).
+		   RE-ENABLE before release (uncomment). */
+		//wdog_init( WDOG_CLK_MODE_PCLK , 0x2000000 );	// approx 8 seconds @ 72 MHz  [actually ~1.86s]
+		//wdog_enable();
 	#endif
 #endif
 

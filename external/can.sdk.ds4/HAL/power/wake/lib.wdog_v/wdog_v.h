@@ -51,7 +51,7 @@
 
 
 //#define WDOG_V_DONT_RESET_ON_MEM_CHECK_FAILED
-//#define WDOG_V_ONLY_LOG
+#define WDOG_V_ONLY_LOG   /* DS5 BRING-UP: virtual watchdog logs instead of resetting (diagnose the 2s reset loop). REVERT before release. */
 //#define WDOG_V_DONT_USE
 
 // Use this macro to embed code within a 'virtual watch' instance
