@@ -51,7 +51,7 @@
 
 
 //#define WDOG_V_DONT_RESET_ON_MEM_CHECK_FAILED
-#define WDOG_V_ONLY_LOG   /* DS5 BRING-UP: virtual watchdog logs instead of resetting (diagnose the 2s reset loop). REVERT before release. */
+//#define WDOG_V_ONLY_LOG   /* DS5 BRING-UP: was defeating the INTENTIONAL detection reset in detect_car_search()::end_detect_phase -> the two-phase learn->reset->operate cycle never completed -> sense_init/can_per_init/can_sync_init (fast path) skipped -> CAN dead. Re-enabled real reset 2026-07-22. */
 //#define WDOG_V_DONT_USE
 
 // Use this macro to embed code within a 'virtual watch' instance

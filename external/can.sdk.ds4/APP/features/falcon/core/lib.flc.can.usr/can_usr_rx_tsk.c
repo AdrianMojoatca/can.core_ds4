@@ -39,10 +39,11 @@ void can_usr_rx_tsk( void* dev_id )
     
     for( ; ; )
     {
-        can_rx( can_usr[DEV_ID].rx_can , &can_msg , 0 ); 
-        
+        can_rx( can_usr[DEV_ID].rx_can , &can_msg , 0 );
+
+        TRACE("[CANRX d%d id=%03X]\r\n", (int)DEV_ID, (unsigned)can_msg.id);   /* DS5 CAN BRING-UP (REVERT before release): prove frames arrive + show IDs */
         //TRACE_CAN_USR("[CAN_USR_RX_TSK %s] - %08x (%d)\n\r" , DEV_ID == CAN_DEV_1 ? "CAN_DEV_1" : "CAN_DEV_0",can_msg.id,DEV_ID);
-        
+
         if(can_usr_rx_filter_check_id((Can_Dev_Id)DEV_ID,can_msg.id)==TRUE)
         {
             wake_enter();
