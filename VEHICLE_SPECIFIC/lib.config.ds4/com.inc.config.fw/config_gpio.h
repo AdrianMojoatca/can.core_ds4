@@ -103,11 +103,11 @@
 	#define IGNITION_SENSE_SET            POS_OUT2_SET   
 	#define IGNITION_SENSE_CLR            POS_OUT2_CLR	 
 	
-	#define HBRAKE_SENSE_SET              OUT_1(TRUE)  //NEG_OUT1_SET	  
-	#define HBRAKE_SENSE_CLR              OUT_1(FALSE) //NEG_OUT1_CLR	   
+	#define HBRAKE_SENSE_SET              ;//OUT_1(TRUE)  DS4: no RS module, indicator OUT not needed
+	#define HBRAKE_SENSE_CLR              ;//OUT_1(FALSE)  DS4: no RS module, indicator OUT not needed
 	
-	#define DOOR_SENSE_SET                NEG_OUT3_SET		
-	#define DOOR_SENSE_CLR                NEG_OUT3_CLR		 
+	#define DOOR_SENSE_SET                ;//NEG_OUT3_SET  DS4: no RS module, indicator OUT not needed
+	#define DOOR_SENSE_CLR                ;//NEG_OUT3_CLR  DS4: no RS module, indicator OUT not needed
 	
 	#define TRUNK_SENSE_SET               ;//NEG_OUT4_SET		  
 	#define TRUNK_SENSE_CLR               ;//NEG_OUT4_CLR		   
