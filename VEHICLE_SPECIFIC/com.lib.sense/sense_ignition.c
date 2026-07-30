@@ -38,7 +38,7 @@ void sense_ignition_3B3( Can_Msg *can_msg )
 	{
 		sense_rs_ign_can( FALSE );
 		sense_rs_handbrake_can(TRUE);
-		gpio_iface_handbrake_on(); 	
+		//gpio_iface_handbrake_on();  DS4: no active handbrake OUT (was latching NEG_OUT1 high on IGN_OFF)
 	}
 	
 
@@ -49,7 +49,7 @@ void sense_ignition_3B3( Can_Msg *can_msg )
 	{
 		sense_rs_ign_can( FALSE );
 		sense_rs_handbrake_can(TRUE);
-		gpio_iface_handbrake_on();
+		//gpio_iface_handbrake_on();  DS4: no active handbrake OUT (was latching NEG_OUT1 high on IGN_OFF)
 	}
 	*/
 }
