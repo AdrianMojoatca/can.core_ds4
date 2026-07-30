@@ -26,6 +26,7 @@ static void core_contract_ds4_gpio_output_on(gpio_iface_output_selector_t output
         case GPIO_IFACE_OUTPUT_RELAY1: gpio_pl_set(GPIO_PL_RLY1_CTL); break;
         case GPIO_IFACE_OUTPUT_RELAY2: gpio_pl_set(GPIO_PL_RLY2_CTL); break;
         case GPIO_IFACE_OUTPUT_RF_LOOP_POWER: gpio_pl_set(GPIO_PL_RFLOOP_POWER); break;
+        case GPIO_IFACE_OUTPUT_NEG_OUT13: gpio_pl_set(GPIO_PL_NEG_OUT13); break;
         case GPIO_IFACE_OUTPUT_LED_GREEN: gpio_pl_clr(GPIO_PL_LED_GREEN); break;
         case GPIO_IFACE_OUTPUT_LED_RED: gpio_pl_clr(GPIO_PL_LED_RED); break;
         case GPIO_IFACE_OUTPUT_LED_BLUE: gpio_pl_clr(GPIO_PL_LED_BLUE); break;
@@ -50,6 +51,7 @@ static void core_contract_ds4_gpio_output_off(gpio_iface_output_selector_t outpu
         case GPIO_IFACE_OUTPUT_RELAY1: gpio_pl_clr(GPIO_PL_RLY1_CTL); break;
         case GPIO_IFACE_OUTPUT_RELAY2: gpio_pl_clr(GPIO_PL_RLY2_CTL); break;
         case GPIO_IFACE_OUTPUT_RF_LOOP_POWER: gpio_pl_clr(GPIO_PL_RFLOOP_POWER); break;
+        case GPIO_IFACE_OUTPUT_NEG_OUT13: gpio_pl_clr(GPIO_PL_NEG_OUT13); break;
         case GPIO_IFACE_OUTPUT_LED_GREEN: gpio_pl_set(GPIO_PL_LED_GREEN); break;
         case GPIO_IFACE_OUTPUT_LED_RED: gpio_pl_set(GPIO_PL_LED_RED); break;
         case GPIO_IFACE_OUTPUT_LED_BLUE: gpio_pl_set(GPIO_PL_LED_BLUE); break;
@@ -74,6 +76,7 @@ static void core_contract_ds4_gpio_output_toggle(gpio_iface_output_selector_t ou
         case GPIO_IFACE_OUTPUT_RELAY1: gpio_pl_tog(GPIO_PL_RLY1_CTL); break;
         case GPIO_IFACE_OUTPUT_RELAY2: gpio_pl_tog(GPIO_PL_RLY2_CTL); break;
         case GPIO_IFACE_OUTPUT_RF_LOOP_POWER: gpio_pl_tog(GPIO_PL_RFLOOP_POWER); break;
+        case GPIO_IFACE_OUTPUT_NEG_OUT13: gpio_pl_tog(GPIO_PL_NEG_OUT13); break;
         case GPIO_IFACE_OUTPUT_LED_GREEN: gpio_pl_tog(GPIO_PL_LED_GREEN); break;
         case GPIO_IFACE_OUTPUT_LED_RED: gpio_pl_tog(GPIO_PL_LED_RED); break;
         case GPIO_IFACE_OUTPUT_LED_BLUE: gpio_pl_tog(GPIO_PL_LED_BLUE); break;
