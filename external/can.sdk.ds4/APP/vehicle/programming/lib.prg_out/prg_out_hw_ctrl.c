@@ -71,7 +71,7 @@ void prg_out_hw_o5( Boolean status )
 {
     TRACE_DEI_PRG_OUT1("O5");
 
-	_800_OUT_5(status);
+	;/* DS4: OUT_5 (NEG_OUT5) reserved for PTS only (contract pts_1); DEI programmable out must NOT drive this pin - GWA etc. neutralized */
 }
 
 //--------------------------------------------------------------------------//
