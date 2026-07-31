@@ -11,6 +11,7 @@
 #include "vrtc_f.h"
 #include "dei_siren.h"
 #include "system_type.h"
+#include "trace.h"   /* DIAG temp: ACC/IGN/START output-map trace */
 
 
 /*==========================================================================*/
@@ -133,7 +134,8 @@ void prg_out_dei_init( void )
 	for( i = 0 ; i < DEI_PROG_OUT_COUNT ; i ++ )
 	{
 		id = feature_get(DEI_FEAT_OUTPUT1 + i);
-		
+		TRACE("\r\n[PRGMAP] out%d id=%d", (int)(i+1), (int)id);   /* DIAG temp */
+
 		if( id && id <= FEAT_DEI_OUT_OPT_MAX) //feature is enable
 		{
 			prg_out_user_adj(id,+1); // increment # of users

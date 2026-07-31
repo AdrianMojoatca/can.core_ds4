@@ -27,6 +27,7 @@
 
 void dei_out_ign_on( void *payload )
 {
+    TRACE("\r\n[DEIOUT] IGN ON");   /* DIAG temp */
     prg_out_ign( TRUE );
 
 }

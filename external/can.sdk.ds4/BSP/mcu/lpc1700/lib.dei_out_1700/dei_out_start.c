@@ -26,10 +26,12 @@ static Boolean out_rs_starter_status=FALSE;
 
 void dei_out_start_on( void *command )
 {    
-    dei_out_start_on_wdog = wdog_v_add_watch( (char *)__func__ , __LINE__  , 12 );	
-    
+    dei_out_start_on_wdog = wdog_v_add_watch( (char *)__func__ , __LINE__  , 12 );
+    TRACE("\r\n[DEIOUT] START ON entered wdog=%d", (int)(dei_out_start_on_wdog != NULL));   /* DIAG temp */
+
     if( dei_out_start_on_wdog != NULL )
     {
+        TRACE("\r\n[DEIOUT] START ON drive");   /* DIAG temp */
         prg_out_start( TRUE );
         prg_out_smartkey_control( TRUE );
     }

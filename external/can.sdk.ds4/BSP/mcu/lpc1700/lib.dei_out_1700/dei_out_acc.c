@@ -27,7 +27,8 @@
 
 void dei_out_acc_on( void *payload )
 {	
-	prg_out_acc(TRUE);	
+	TRACE("\r\n[DEIOUT] ACC ON");   /* DIAG temp */
+	prg_out_acc(TRUE);
 }
 
 //--------------------------------------------------------------------------//
