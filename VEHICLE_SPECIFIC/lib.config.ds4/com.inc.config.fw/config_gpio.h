@@ -253,7 +253,7 @@
 // </h> 
 #define NEG_OUT1_CFG        0x01
 #define NEG_OUT2_CFG        0x00                    
-#define NEG_OUT3_CFG        0x02
+#define NEG_OUT3_CFG        0x01
 #define NEG_OUT4_CFG        0x01
 #define NEG_OUT5_CFG        0x01
 #define POS_OUT1_CFG        0x01

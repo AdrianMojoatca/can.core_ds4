@@ -30,7 +30,8 @@
 #define FW_NAME     "FRD37EU"
 
 //#define APP_VERSION "1.00_00" //  06_10_2025 - primam versiune
-#define APP_VERSION "1.00_04" //  08_05_2026 - func_rs_call_back() in loc (sau dupa) tsk_rs_pts_ctrl()
+//#define APP_VERSION "1.00_04" //  08_05_2026 - func_rs_call_back() in loc (sau dupa) tsk_rs_pts_ctrl()
+#define APP_VERSION "1.00_05" //  03_08_2026 - Claude
 
 #define FW_INFO     ""
 
